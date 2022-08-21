@@ -1,0 +1,25 @@
+{
+  "name": "amtisploit",
+  "version": "1.0.0",
+  "description": "hack your system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tomermk/AmtiSploit.git"
+  },
+  "keywords": [
+    "amtisploit"
+  ],
+  "author": "Amti Biton & Tomer Mekler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tomermk/AmtiSploit/issues"
+  },
+  "homepage": "https://github.com/Tomermk/AmtiSploit#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
