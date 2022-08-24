@@ -17,7 +17,7 @@ function App() {
         >
           Learn React
         </a>
-        <form action="localhost:6000/post" method="post" 
+        <form action="http://localhost:6000/post" method="post" 
               className="form">
           <button type="submit">Connected?</button>
         </form>
