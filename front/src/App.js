@@ -17,6 +17,10 @@ function App() {
         >
           Learn React
         </a>
+        <form action="localhost:6000/post" method="post" 
+              className="form">
+          <button type="submit">Connected?</button>
+        </form>
       </header>
     </div>
   );
