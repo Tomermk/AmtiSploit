@@ -38,9 +38,6 @@ const changeTheme = (value) => {
     <>
       <Menu
         onClick={(e) => onMenuClick(e)}
-        style={{
-          width: 256,
-        }}
         defaultSelectedKeys={[current]}
         defaultOpenKeys={['/attack']}
         mode="inline"
