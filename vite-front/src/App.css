@@ -4,3 +4,9 @@
   /* padding: 2rem; */
   text-align: center;
 }
+
+.login-card {
+  margin: auto;
+  border: 3px solid #f0f0f0;
+  padding: 10px;
+}
