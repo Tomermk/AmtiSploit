@@ -1,16 +1,19 @@
-import React,{useState} from 'react'
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import React,{useState, useEffect} from 'react'
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Card } from 'antd';
 import logo from './assets/react.svg'
 import './App.css'
 
 function Login() {
-
-  const [usename, setUsername] = useState("");
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const location = useLocation();
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    navigate("/",{state: {collapsed: location.state.collapsed}});
   };
+
 
   return (
     <div style={{height: '100vh', backgroundColor: '#001529'}}>
@@ -23,6 +26,7 @@ function Login() {
         <Form
           name="normal_login"
           className="login-form"
+          //labelCol={{span: 6}}
           initialValues={{
             remember: true,
           }}
@@ -30,17 +34,23 @@ function Login() {
         >
           <img src={logo} alt='logo' style={{width: 100, paddingBottom: '20px'}} />
           <Form.Item
-            name="username"
+            //label="Email"
+            name="email"
             rules={[
               {
                 required: true,
-                message: 'Please input your Username!',
+                message: 'Please input your Email!',
               },
             ]}
           >
-            <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            <Input 
+              prefix={<MailOutlined className="site-form-item-icon" />} 
+              placeholder="example@gmail.com" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value)}/>
           </Form.Item>
           <Form.Item
+            //label="Password"
             name="password"
             rules={[
               {
@@ -49,10 +59,13 @@ function Login() {
               },
             ]}
           >
-            <Input
+            <Input.Password
               prefix={<LockOutlined className="site-form-item-icon" />}
               type="password"
               placeholder="Password"
+              iconRender={(visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined/>))}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Item>
           <Form.Item>

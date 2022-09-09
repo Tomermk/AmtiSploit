@@ -3,19 +3,24 @@ import './Dashboard.css'
 import SideMenu from './SideMenu'
 import StatisticsPage from './StatisticsPage'
 import NotFound from './NotFound';
-import {Routes,Route,useNavigate } from "react-router-dom"
+import {Routes,Route,useNavigate, useLocation } from "react-router-dom"
 import { Layout } from 'antd';
 const {Content, Sider} = Layout
 
 function Dashboard() {
+  const location = useLocation();
   const navigate = useNavigate();
   const [current, setCurrent] = useState('/');
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if(location.state){
+      return location.state.collapsed;
+    }
+    return false;
+  });
 
   function handleMenuClick(target){
     if( target.key === 'signout'){
-      console.log("signout please");
-      navigate("/login")
+      navigate("/login", {state: {collapsed: collapsed}});
       setCurrent(target.key);
     } else {
       setCurrent(target.key);

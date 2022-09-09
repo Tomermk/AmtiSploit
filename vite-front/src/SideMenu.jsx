@@ -11,16 +11,11 @@ function SideMenu({current,onMenuClick}) {
 const [theme, setTheme] = useState('dark');
 
 
-
   const items = [
     { label: 'Dashboard', key: '/', icon: <PieChartOutlined />},
     { label: 'Attack Vector', key: '/attack', icon: <BugOutlined />, children: [
       {label: 'Option 5', key: '/attack1'},
-      {label: 'Option 6', key: '/attack2'},
-      {label: 'Submenu', key: 'sub3', children: [
-        {label: 'Option 7',key: '7'},
-        {label: 'Option 8',key: '8'}
-      ]}
+      {label: 'Option 6', key: '/attack2'}
     ]},
     { label:'Settings',key: 'sub4', icon: <SettingOutlined/>, children: [
       {label: 'Users', key: '9', icon: <UserOutlined/>},
