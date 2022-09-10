@@ -21,7 +21,7 @@ function Login() {
         width: 450,
         padding: '24px',
         top: '25%',
-        borderRadius: '90px'
+        borderRadius: '15px'
       }}>
         <Form
           name="normal_login"
