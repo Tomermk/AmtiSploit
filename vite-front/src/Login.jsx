@@ -1,5 +1,5 @@
-import React,{useState, useEffect} from 'react'
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import React,{useState} from 'react'
+import { useNavigate, useLocation } from 'react-router-dom';
 import { LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Card } from 'antd';
 import logo from './assets/react.svg'
@@ -11,6 +11,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const location = useLocation();
   const onFinish = (values) => {
+    console.log(values);
     navigate("/",{state: {collapsed: location.state.collapsed}});
   };
 
@@ -26,7 +27,6 @@ function Login() {
         <Form
           name="normal_login"
           className="login-form"
-          //labelCol={{span: 6}}
           initialValues={{
             remember: true,
           }}
@@ -40,6 +40,9 @@ function Login() {
               {
                 required: true,
                 message: 'Please input your Email!',
+              },
+              { whitespace: true,
+                message: 'Email cannot be empty'
               },
             ]}
           >
@@ -57,6 +60,30 @@ function Login() {
                 required: true,
                 message: 'Please input your Password!',
               },
+              { 
+                whitespace: true,
+                message: 'Password cannot be empty'
+              },
+              { 
+                min: 8,
+                message: 'Password cannot be shorter than 8 characters'
+              },
+              {
+                pattern: /^(?=.*\d).{8,}$/,
+                message: 'Password must include one digit'
+              },
+              {
+                pattern: /^(?=.*[a-z]).{8,}$/,
+                message: 'Password must include at least one small letter'
+              },
+              {
+                pattern: /^(?=.*[A-Z]).{8,}$/,
+                message: 'Password must include at least one capital letter'
+              },
+              {
+                pattern: /^(?=.*[!@#$%\^\&*\)\(+=._\-)]).{8,}$/,
+                message: 'Password must include at least one special character'
+              }
             ]}
           >
             <Input.Password
