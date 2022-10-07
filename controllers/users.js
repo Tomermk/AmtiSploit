@@ -1,5 +1,5 @@
 const Users = require("../models/users.model");
-
+const PWDTool = require("../utils/passwords");
 
 const getUserFromDB = async ({ username }) => {
     try {
@@ -11,6 +11,11 @@ const getUserFromDB = async ({ username }) => {
     }
 };
 
+const checkPasswordFromDB = ({ password,passwordHash, passwordSalt }) => {
+    return PWDTool.validatePassword(password,passwordHash,passwordSalt);
+};
+
 module.exports = {
   getUserFromDB,
+  checkPasswordFromDB,
 };
