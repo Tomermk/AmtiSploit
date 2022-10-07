@@ -1,4 +1,5 @@
-import React,{useState} from 'react'
+import React,{useState, useRef, useEffect} from 'react'
+import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Card } from 'antd';
@@ -10,9 +11,31 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const location = useLocation();
-  const onFinish = (values) => {
-    console.log(values);
-    navigate("/",{state: {collapsed: location.state.collapsed}});
+  const userRef = useRef(null);
+
+  useEffect( () => {
+    if(userRef.current) {
+      userRef.current.focus();
+    }
+  },[userRef]);
+
+  const onFinish = async() => {
+    try {
+      const res = await axios.post("http://localhost:3000/login", {username,password});
+      const jwt = res.data.token;
+      localStorage.setItem("auth-jwt", JSON.stringify(jwt));
+      if(location.state) {
+        navigate("/",{state: {collapsed: location.state.collapsed}});
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      if(err.response) {
+        console.log(err.response.data);
+      } else {
+        console.log(err);
+      }
+    }
   };
 
 
@@ -50,7 +73,9 @@ function Login() {
               prefix={<MailOutlined className="site-form-item-icon" />} 
               placeholder="example@gmail.com" 
               value={username} 
-              onChange={(e) => setUsername(e.target.value)}/>
+              onChange={(e) => setUsername(e.target.value)}
+              ref= {userRef}
+              />
           </Form.Item>
           <Form.Item
             //label="Password"
@@ -64,26 +89,26 @@ function Login() {
                 whitespace: true,
                 message: 'Password cannot be empty'
               },
-              { 
-                min: 8,
-                message: 'Password cannot be shorter than 8 characters'
-              },
-              {
-                pattern: /^(?=.*\d).{8,}$/,
-                message: 'Password must include one digit'
-              },
-              {
-                pattern: /^(?=.*[a-z]).{8,}$/,
-                message: 'Password must include at least one small letter'
-              },
-              {
-                pattern: /^(?=.*[A-Z]).{8,}$/,
-                message: 'Password must include at least one capital letter'
-              },
-              {
-                pattern: /^(?=.*[!@#$%\^\&*\)\(+=._\-)]).{8,}$/,
-                message: 'Password must include at least one special character'
-              }
+              // { 
+              //   min: 8,
+              //   message: 'Password cannot be shorter than 8 characters'
+              // },
+              // {
+              //   pattern: /^(?=.*\d).{8,}$/,
+              //   message: 'Password must include one digit'
+              // },
+              // {
+              //   pattern: /^(?=.*[a-z]).{8,}$/,
+              //   message: 'Password must include at least one small letter'
+              // },
+              // {
+              //   pattern: /^(?=.*[A-Z]).{8,}$/,
+              //   message: 'Password must include at least one capital letter'
+              // },
+              // {
+              //   pattern: /^(?=.*[!@#$%\^\&*\)\(+=._\-)]).{8,}$/,
+              //   message: 'Password must include at least one special character'
+              // }
             ]}
           >
             <Input.Password

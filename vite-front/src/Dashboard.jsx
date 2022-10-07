@@ -20,6 +20,7 @@ function Dashboard() {
 
   function handleMenuClick(target){
     if( target.key === 'signout'){
+      localStorage.removeItem('auth-jwt');
       navigate("/login", {state: {collapsed: collapsed}});
       setCurrent(target.key);
     } else {
