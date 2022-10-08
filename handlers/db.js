@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 const dbConfig = require("../config/db.config");
 
 // Create a connection to the database
-//const connection = mysql.createConnection({
 const sequelize = new Sequelize(
     dbConfig.DB,
     dbConfig.USER,

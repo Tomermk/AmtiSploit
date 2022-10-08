@@ -1,5 +1,7 @@
 const crypto = require("crypto");
-var databaseConnection = require("../handlers/db");
+// var databaseConnection = require("../handlers/db");
+const PasswordHistory = require('../models/passhistory.model');
+const {DataTypes} = require("sequelize");
 const passwordComplexity = require("joi-password-complexity");
 const PWD_CONFIG = require("../config/pwd.config");
 const PWD_HISTORY_CONFIG = require("../config/pwdHistory.config");
@@ -26,8 +28,15 @@ exports.validatePassword = (password,passwordHash,salt) => {
 }
 
 exports.archivePassword = (username,passwordHash,salt) => {
-    results = databaseConnection.query(`INSERT INTO vulnwebsitedb.passwordHistory(userName,passwordHash,passwordSalt) VALUES ('${username}','${passwordHash}','${salt}')`)
-    // console.log(`password archived ${username} : ${passwordHash} : ${salt}`)
+    PasswordHistory.create({
+        userName: username,
+        passwordHash: `${passwordHash}`,
+        passwordSalt: `${salt}`,
+    }).then((result) => {
+        console.log(result);
+    }).catch((error) => {
+        console.error('Failed to create a new record : ', error);
+    });
 }
 
 exports.changePassword = (username,password) => {

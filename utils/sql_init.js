@@ -7,7 +7,7 @@ var passRes = PWDTool.calculateHmacAndSalt(usersDefaultPassword)
 var passwordHash = passRes.hmac
 var passwordSalt = passRes.salt
 
-PasswordHistory.sync().then(() => {console.log("PasswordHistory table created")}).catch((err) => {console.log(err)});
+PasswordHistory.sync({force: true}).then(() => {console.log("PasswordHistory table created")}).catch((err) => {console.log(err)});
 
 Users.sync({force: true}).then( () => {
     console.log('Users table created successfully!');
