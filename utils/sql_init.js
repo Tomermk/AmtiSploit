@@ -2,8 +2,18 @@ const Users = require('../models/users.model');
 const PasswordHistory = require('../models/passhistory.model');
 const PWDTool = require("../utils/passwords");
 const usersDefaultPassword = "Password1!";
+const mysql = require("mysql2/promise");
+const dbConfig = require("../config/db.config");
 
-var passRes = PWDTool.calculateHmacAndSalt(usersDefaultPassword)
+// Open the connection to MySQL server
+mysql.createConnection({
+  host: "localhost",
+  user: dbConfig.USER,
+  password: dbConfig.PASSWORD,
+}).then((connection) => {
+    connection.query(
+        `CREATE DATABASE IF NOT EXISTS amtisploitdb;`).then(() => {
+            var passRes = PWDTool.calculateHmacAndSalt(usersDefaultPassword)
 var passwordHash = passRes.hmac
 var passwordSalt = passRes.salt
 
@@ -56,3 +66,9 @@ Users.sync({force: true}).then( () => {
 }).catch((error) => {
     console.error('Unable to create table: ',error);
 });
+        })
+        connection.end();
+    }).catch((err) => { console.log(err); });
+
+
+
