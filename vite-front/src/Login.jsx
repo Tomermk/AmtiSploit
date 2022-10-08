@@ -10,6 +10,7 @@ function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const location = useLocation();
   const userRef = useRef(null);
 
@@ -32,6 +33,7 @@ function Login() {
     } catch (err) {
       if(err.response) {
         console.log(err.response.data);
+        setError(err.response.data);
       } else {
         console.log(err);
       }
@@ -73,7 +75,8 @@ function Login() {
               prefix={<MailOutlined className="site-form-item-icon" />} 
               placeholder="example@gmail.com" 
               value={username} 
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {setUsername(e.target.value);
+              setError("");}}
               ref= {userRef}
               />
           </Form.Item>
@@ -117,10 +120,14 @@ function Login() {
               placeholder="Password"
               iconRender={(visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined/>))}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {setPassword(e.target.value);
+              setError("");}}
             />
           </Form.Item>
-          <Form.Item>
+          { error && <Form.Item style={{color: 'red'}}>
+              {error}
+          </Form.Item>}
+          <Form.Item>  
             <Form.Item name="remember" valuePropName="checked" noStyle>
               <Checkbox>Remember me |</Checkbox>
             </Form.Item>
