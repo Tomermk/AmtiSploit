@@ -19,7 +19,8 @@ app.use("/login",jsonParser ,loginRouter);
 app.all("*",[validateToken]);
 
 app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!"});
+  console.log(req.data);
+  res.json({ Username: req.data.username, Rolename: req.data.role });
 });
   
 app.post("/post", jsonParser,(req, res) => {
