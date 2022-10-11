@@ -10,6 +10,7 @@ function Login() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const location = useLocation();
   const userRef = useRef(null);
@@ -22,6 +23,7 @@ function Login() {
 
   const onFinish = async() => {
     try {
+      setLoading(false);
       const res = await axios.post("http://localhost:3000/login", {username,password});
       const jwt = res.data.token;
       localStorage.setItem("auth-jwt", JSON.stringify(jwt));
@@ -40,6 +42,13 @@ function Login() {
     }
   };
 
+  const onFinishFailed = () => {
+    setLoading(false);
+  }
+
+  const handleClick = () => {
+    setLoading(true);
+  }
 
   return (
     <div style={{height: '100vh', backgroundColor: '#001529'}}>
@@ -56,6 +65,7 @@ function Login() {
             remember: true,
           }}
           onFinish={onFinish}
+          onFinishFailed={onFinishFailed}
         >
           <img src={logo} alt='logo' style={{width: 100, paddingBottom: '20px'}} />
           <Form.Item
@@ -138,7 +148,7 @@ function Login() {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button" shape='round'>
+            <Button type="primary" htmlType="submit" className="login-form-button" shape='round' loading={loading} onClick={handleClick}>
               Log in
             </Button>
           </Form.Item>
