@@ -25,8 +25,11 @@ function Login() {
     try {
       setLoading(false);
       const res = await axios.post("http://localhost:3000/login", {username,password});
-      const jwt = res.data.token;
-      localStorage.setItem("auth-jwt", JSON.stringify(jwt));
+      const jwt = res.data.accessToken;
+      const refresh = res.data.refreshToken;
+      setUsername("res.data.username");
+      localStorage.setItem("authorization", JSON.stringify(jwt));
+      localStorage.setItem("refresh", JSON.stringify(refresh));
       if(location.state) {
         navigate("/",{state: {collapsed: location.state.collapsed}});
       } else {

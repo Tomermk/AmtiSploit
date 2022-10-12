@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom'
 
 const PrivateRoutes = () => {
-    let token = localStorage.getItem('auth-jwt');
+    let token = localStorage.getItem('authorization');
     let auth = {'token':false};
     if (token) auth = {'token':true};
     return (

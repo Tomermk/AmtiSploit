@@ -1,17 +1,19 @@
-import React,{useState} from 'react'
-import './Dashboard.css'
+import {useState, useEffect} from 'react'
 import SideMenu from './SideMenu'
 import StatisticsPage from './StatisticsPage'
 import NotFound from './NotFound';
 import {Routes,Route,useNavigate, useLocation } from "react-router-dom"
 import { Layout } from 'antd';
 import { IdleTimerContainer } from './Components/idleTimerContainer';
+import axios from 'axios';
 const {Content, Sider} = Layout
+import './Dashboard.css'
 
 function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const [current, setCurrent] = useState('/');
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem("authorization")));
   const [collapsed, setCollapsed] = useState(() => {
     if(location.state){
       return location.state.collapsed;
@@ -19,8 +21,20 @@ function Dashboard() {
     return false;
   });
 
-  function handleMenuClick(target){
+  useEffect(() => {
+    localStorage.setItem('authorization', JSON.stringify(token));
+  },[token]);
+
+  const handleMenuClick = async(target) =>{
     if( target.key === 'signout'){
+      try{
+        await axios.post("http://localhost:3000/logout",{},{
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+      });
+    } catch (err) {console.error(err)};
       localStorage.clear();
       navigate("/login", {state: {collapsed: collapsed}});
       setCurrent(target.key);

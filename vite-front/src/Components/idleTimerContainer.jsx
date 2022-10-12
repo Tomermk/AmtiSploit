@@ -8,6 +8,7 @@ export const IdleTimerContainer = ({children}) => {
     const [timer, setTimer] = useState(60);
     const navigate = useNavigate();
 
+
     const onIdle = () => {
         console.log("User is idle");
         setIsModalOpen(false);
