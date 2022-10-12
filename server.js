@@ -4,12 +4,13 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require('body-parser');
 const loginRouter = require("./routes/login");
+const logoutRouter = require("./routes/logout");
 const  {validateToken} = require("./middleware/tokenValidator");
 const PORT = process.env.PORT || 6000;
 
 
 var corsOptions = {
-  origin: "*"
+  origin: "*",
 };
 
 app.use(cors(corsOptions));
@@ -17,6 +18,7 @@ const jsonParser = bodyParser.json()
 
 app.use("/login",jsonParser ,loginRouter);
 app.all("*",[validateToken]);
+app.use("/logout",jsonParser, logoutRouter);
 
 app.get("/api", (req, res) => {
   console.log(req.data);

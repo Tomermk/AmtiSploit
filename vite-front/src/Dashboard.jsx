@@ -1,16 +1,19 @@
-import React,{useState} from 'react'
-import './Dashboard.css'
+import {useState, useEffect} from 'react'
 import SideMenu from './SideMenu'
 import StatisticsPage from './StatisticsPage'
 import NotFound from './NotFound';
 import {Routes,Route,useNavigate, useLocation } from "react-router-dom"
 import { Layout } from 'antd';
+import { IdleTimerContainer } from './Components/idleTimerContainer';
+import axios from 'axios';
 const {Content, Sider} = Layout
+import './Dashboard.css'
 
 function Dashboard() {
   const location = useLocation();
   const navigate = useNavigate();
   const [current, setCurrent] = useState('/');
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem("authorization")));
   const [collapsed, setCollapsed] = useState(() => {
     if(location.state){
       return location.state.collapsed;
@@ -18,9 +21,21 @@ function Dashboard() {
     return false;
   });
 
-  function handleMenuClick(target){
+  useEffect(() => {
+    localStorage.setItem('authorization', JSON.stringify(token));
+  },[token]);
+
+  const handleMenuClick = async(target) =>{
     if( target.key === 'signout'){
-      localStorage.removeItem('auth-jwt');
+      try{
+        await axios.post("http://localhost:3000/logout",{},{
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+      });
+    } catch (err) {console.error(err)};
+      localStorage.clear();
       navigate("/login", {state: {collapsed: collapsed}});
       setCurrent(target.key);
     } else {
@@ -31,22 +46,24 @@ function Dashboard() {
 
   return (
     <>
-    <Layout style={{ minHeight: '100vh',}}>
-      <Sider collapsible collapsed={collapsed} onCollapse={(value => setCollapsed(value))}>
-        <div className='logo'/>
-        <SideMenu current={current} onMenuClick={handleMenuClick}/>
-      </Sider>
-      <Layout className='site-layout'>
-        <Content style={{ margin: '0 16px',}}>
-          <Routes>
-              <Route exact path="/" element={<StatisticsPage/>}/>
-              <Route exact path="/attack1" element={<h1>This is the attack page 1</h1>}/>
-              <Route exact path="/attack2" element={<h1>This is the attack page 2</h1>}/>
-              <Route path='/*' element={<NotFound/>} />
-          </Routes>
-        </Content>
+    <IdleTimerContainer>
+      <Layout style={{ minHeight: '100vh',}}>
+        <Sider collapsible collapsed={collapsed} onCollapse={(value => setCollapsed(value))}>
+          <div className='logo'/>
+          <SideMenu current={current} onMenuClick={handleMenuClick}/>
+        </Sider>
+        <Layout className='site-layout'>
+          <Content style={{ margin: '0 16px',}}>
+            <Routes>
+                <Route exact path="/" element={<StatisticsPage/>}/>
+                <Route exact path="/attack1" element={<h1>This is the attack page 1</h1>}/>
+                <Route exact path="/attack2" element={<h1>This is the attack page 2</h1>}/>
+                <Route path='/*' element={<NotFound/>} />
+            </Routes>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </IdleTimerContainer>
     </>
   )
 }
