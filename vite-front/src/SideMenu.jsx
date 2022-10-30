@@ -14,7 +14,7 @@ const [theme, setTheme] = useState('dark');
   const items = [
     { label: 'Dashboard', key: '/', icon: <PieChartOutlined />},
     { label: 'Attack Vector', key: '/attack', icon: <BugOutlined />, children: [
-      {label: 'Option 5', key: '/attack1'},
+      {label: 'Launch attack', key: '/attack1'},
       {label: 'Option 6', key: '/attack2'}
     ]},
     { label:'Settings',key: 'sub4', icon: <SettingOutlined/>, children: [
