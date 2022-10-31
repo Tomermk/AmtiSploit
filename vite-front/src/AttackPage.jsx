@@ -1,19 +1,24 @@
 import { useState } from "react";
-import { Button, Form, Input, Select, Table, Tag, Typography, Tooltip } from "antd";
+import { Button, Form, Input, Select, Table, Tag, Typography } from "antd";
 import {SyncOutlined} from "@ant-design/icons";
+import ExploitSelector from "./Components/ExploitSelector";
+import useSWR from "swr";
+import fetcher from "./fetcher";
 import "./AttackPage.css";
 
 export default function AttackPage() {
   const [host, setHost] = useState("");
-  const [attackName, setAttackName] = useState("Log4shell");
+  const [token, setToken] = useState(JSON.parse(localStorage.getItem("authorization")));
+  const { data, error} = useSWR(['http://localhost:3000/launch',token], fetcher);
+  const [attackName, setAttackName] = useState(data[0].name);
+
+
+  function handleSelectChange(value) {
+    setAttackName(value);
+  }
 
   const { Title } = Typography;
   const { Option } = Select;
-
-  const description = {
-    Log4shell: "Log4Shell is a vulnerability in the Apache Log4j library that allows remote code execution.",
-    BlueKeep: "BlueKeep is a vulnerability in the Remote Desktop Protocol (RDP) that allows remote code execution.",
-  }
 
   const status = {
     1: {
@@ -113,20 +118,8 @@ export default function AttackPage() {
             }}
             style={{ width: 300 }}
           />
-          <Tooltip title={description[attackName]}>
-            <Select
-              className="form-element"
-              defaultValue={attackName}
-              value={attackName}
-              onChange={(value) => {
-                setAttackName(value);
-              }}
-              style={{ width: 120 }}
-            >
-              <Option value="Log4shell">Log4shell</Option>
-              <Option value="BlueKeep">BlueKeep</Option>
-            </Select>
-          </Tooltip>
+          {!data && <Select loading={true}/>}
+          {data && <ExploitSelector data={data} name={attackName} onSelectChange={handleSelectChange}/>}
           <Button type="primary">Launch</Button>
         </Form>
       </div>
