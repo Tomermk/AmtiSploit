@@ -1,29 +1,40 @@
 import { useState } from "react";
-import { Button, Form, Input, Select, Table, Tag } from "antd";
+import { Button, Form, Input, Select, Table, Tag, Typography, Tooltip } from "antd";
+import {SyncOutlined} from "@ant-design/icons";
 import "./AttackPage.css";
 
 export default function AttackPage() {
   const [host, setHost] = useState("");
-  const [attackName, setAttackName] = useState("Log4J");
+  const [attackName, setAttackName] = useState("Log4shell");
 
+  const { Title } = Typography;
   const { Option } = Select;
+
+  const description = {
+    Log4shell: "Log4Shell is a vulnerability in the Apache Log4j library that allows remote code execution.",
+    BlueKeep: "BlueKeep is a vulnerability in the Remote Desktop Protocol (RDP) that allows remote code execution.",
+  }
 
   const status = {
     1: {
-      color: '#64ea91',
-      text: 'Success',
+      color: '#10953C',
+      text: 'Safe',
+      icon: '',
     },
     2: {
-      color: '#f8c82e',
+      color: '#EA9425',
       text: 'In Progress',
+      icon: <SyncOutlined spin/>,
     },
     3: {
-      color: '#f69899',
-      text: 'Failed',
+      color: '#db2d2f',
+      text: 'Vulnerable',
+      icon: '',
     },
     4: {
       color: '#8fc9fb',
       text: 'EXTENDED',
+      icon: '',
     },
   }
 
@@ -32,14 +43,21 @@ export default function AttackPage() {
       key: "1",
       time: "2022-10-01 12:35:00",
       url: 'http://192.168.31.143:8080',
-      attack: "Log4J",
+      attack: "Log4shell",
       status: 2,
     },
     {
       key: "2",
       time: "2022-10-01 12:45:00",
       url: 'http://192.168.31.143:8080',
-      attack: "Log4J",
+      attack: "Log4shell",
+      status: 3,
+    },
+    {
+      key: "3",
+      time: "2022-11-21 12:33:00",
+      url: 'http://192.168.31.143:8080',
+      attack: "Log4shell",
       status: 1,
     },
   ];
@@ -69,7 +87,7 @@ export default function AttackPage() {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: text => <Tag color={status[text].color}>{status[text].text}</Tag>
+      render: text => <Tag className="tag" color={status[text].color} icon={status[text].icon}>{status[text].text}</Tag>
     },
   ];
 
@@ -82,7 +100,7 @@ export default function AttackPage() {
 
   return (
     <div className="container">
-      <h1 className="form-title">Attack Page</h1>
+      <Title className="form-title">Exploit Management</Title>
       <div className="form">
         <Form>
           <Input
@@ -93,20 +111,23 @@ export default function AttackPage() {
             onChange={(e) => {
               setHost(e.target.value);
             }}
+            style={{ width: 300 }}
           />
-          <Select
-            className="form-element"
-            defaultValue={attackName}
-            value={attackName}
-            onChange={(value) => {
-              setAttackName(value);
-            }}
-            style={{ width: 120 }}
-          >
-            <Option value="Log4J">Log4J</Option>
-            <Option value="BlueKeep">BlueKeep</Option>
-          </Select>
-          <Button>Launch</Button>
+          <Tooltip title={description[attackName]}>
+            <Select
+              className="form-element"
+              defaultValue={attackName}
+              value={attackName}
+              onChange={(value) => {
+                setAttackName(value);
+              }}
+              style={{ width: 120 }}
+            >
+              <Option value="Log4shell">Log4shell</Option>
+              <Option value="BlueKeep">BlueKeep</Option>
+            </Select>
+          </Tooltip>
+          <Button type="primary">Launch</Button>
         </Form>
       </div>
       <div className="table">
