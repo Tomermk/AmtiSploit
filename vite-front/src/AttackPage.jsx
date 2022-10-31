@@ -110,7 +110,7 @@ export default function AttackPage() {
         </Form>
       </div>
       <div className="table">
-        <Table dataSource={dataSource} columns={columns} />;
+        <Table dataSource={dataSource} columns={columns} />
       </div>
     </div>
   );

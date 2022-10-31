@@ -1,5 +1,6 @@
 const Users = require('../models/users.model');
 const PasswordHistory = require('../models/passhistory.model');
+const Vulnerabilities = require('../models/vulnerabilities.model');
 const PWDTool = require("../utils/passwords");
 const usersDefaultPassword = "Password1!";
 const mysql = require("mysql2/promise");
@@ -18,6 +19,17 @@ mysql.createConnection({
     var passwordSalt = passRes.salt;
 
     PasswordHistory.sync({force: true}).then(() => {console.log("PasswordHistory table created")}).catch((err) => {console.log(err)});
+
+    Vulnerabilities.sync({force: true}).then(() => {
+        console.log("Vulnerabilities table created")
+        Vulnerabilities.create({
+            name: "Log4Shell",
+            description: "Log4Shell is a vulnerability in the Apache Log4j library that allows remote code execution.",
+            script: "docker run -p 8888:8888 -p 1389:1389 --e=IP=%hostname% --name log4shell ghcr.io/wh1t3h47/log4shell:latest \n docker run -p 8088:8088 ..."
+        }).then(() => {
+            console.log("Log4Shell vulnerability created")
+        }).catch((err) => {console.log(err)});
+    }).catch((err) => {console.log(err)});
 
     Users.sync({force: true}).then( () => {
         console.log('Users table created successfully!');

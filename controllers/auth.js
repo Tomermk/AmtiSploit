@@ -1,6 +1,6 @@
 const { response } = require("express");
 const { generateAccessToken, generateRefreshToken } = require("../utils/token-generator");
-const { getUserFromDB, checkPasswordFromDB } = require("./users");
+const { getUserFromDB, checkPasswordFromDB } = require(".././handlers/users");
 
 const login = async (req, res = response) => {
   const { username, password } = req.body;
