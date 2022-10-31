@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const { getVulnerabilities } = require("../controllers/vulnController");
+const { getVulnerabilities, getExploits } = require("../controllers/vulnController");
 const router = Router();
 
 
@@ -12,5 +12,9 @@ router.post("/", (req, res) => {
 router.get("/",
 [],
 getVulnerabilities);
+
+router.get("/exploits",
+[],
+getExploits);
 
 module.exports = router;

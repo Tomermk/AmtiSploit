@@ -1,6 +1,7 @@
 const Users = require('../models/users.model');
 const PasswordHistory = require('../models/passhistory.model');
 const Vulnerabilities = require('../models/vulnerabilities.model');
+const Exploits = require('../models/exploits.model');
 const PWDTool = require("../utils/passwords");
 const usersDefaultPassword = "Password1!";
 const mysql = require("mysql2/promise");
@@ -34,7 +35,29 @@ mysql.createConnection({
             description: "BlueKeep is a vulnerability in the Remote Desktop Protocol (RDP) that allows remote code execution.",
             script: "docker run -p 3389:3389 --e=IP=%hostname% --name bluekeep ghcr.io/wh1t3h47/log4shell:latest"
         }).then(() => {
-            console.log("Log4Shell vulnerability created")
+            console.log("BlueKeep vulnerability created")
+        }).catch((err) => {console.log(err)});
+    }).catch((err) => {console.log(err)});
+
+    Exploits.sync({force: true}).then(() => {
+        console.log("Exploits table created")
+        Exploits.create({
+            host: "http://192.168.31.143:8080",
+            attack: "Log4Shell",
+            status: 2,
+        }).then(() => {
+        }).catch((err) => {console.log(err)});
+        Exploits.create({
+            host: "http://192.168.31.144:8080",
+            attack: "Log4Shell",
+            status: 3,
+        }).then(() => {
+        }).catch((err) => {console.log(err)});
+        Exploits.create({
+            host: "http://192.168.31.145:8080",
+            attack: "BlueKeep",
+            status: 1,
+        }).then(() => {
         }).catch((err) => {console.log(err)});
     }).catch((err) => {console.log(err)});
 
