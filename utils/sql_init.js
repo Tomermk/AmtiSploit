@@ -9,7 +9,7 @@ const dbConfig = require("../config/db.config");
 
 // Open the connection to MySQL server
 mysql.createConnection({
-  host: "localhost",
+  host: dbConfig.HOST,
   user: dbConfig.USER,
   password: dbConfig.PASSWORD,
 }).then((connection) => {
