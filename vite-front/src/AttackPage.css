@@ -1,4 +1,5 @@
 .container {
+    margin-top: 20px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -11,10 +12,12 @@
 
 .form-title {
     flex: 0 0 65%;
+    margin-top: -10%;
 }
 
 .form {
     flex: 0 0 40%;
+    margin-top: -2%;
 }
 
 .form-element {
@@ -24,4 +27,9 @@
 .table{
     flex: 0 0 100%;
 
+}
+
+.tag {
+    border: 1px solid rgb(184, 178, 178);
+    text-align: center;
 }

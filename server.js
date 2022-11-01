@@ -5,6 +5,7 @@ const cors = require("cors");
 const bodyParser = require('body-parser');
 const loginRouter = require("./routes/login");
 const logoutRouter = require("./routes/logout");
+const launchRouter = require("./routes/launch");
 const  {validateToken} = require("./middleware/tokenValidator");
 const PORT = process.env.PORT || 6000;
 
@@ -19,6 +20,7 @@ const jsonParser = bodyParser.json()
 app.use("/login",jsonParser ,loginRouter);
 app.all("*",[validateToken]);
 app.use("/logout",jsonParser, logoutRouter);
+app.use("/launch",jsonParser, launchRouter);
 
 app.get("/api", (req, res) => {
   console.log(req.data);
