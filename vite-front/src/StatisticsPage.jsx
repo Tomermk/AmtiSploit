@@ -1,20 +1,13 @@
-import {useState, useEffect} from 'react'
+import {useState,useContext} from 'react'
 import {Button} from 'antd'
 import axios from 'axios'
 import jwt_decode from "jwt-decode";
+import {AuthContext} from './context/AuthContext';
 
 function StatisticsPage() {
   const [data, setData] = useState("");
-  const [token, setToken] = useState(JSON.parse(localStorage.getItem('authorization')));
-  const [reToken, setReToken] = useState(JSON.parse(localStorage.getItem('refresh')));
+  const {token, reToken, setToken, setReToken} = useContext(AuthContext);
 
-  useEffect( () =>  {
-    localStorage.setItem('authorization', JSON.stringify(token));
-  },[token]);
-
-  useEffect( () =>  {
-    localStorage.setItem('refresh', JSON.stringify(reToken));
-  },[reToken]);
 
   const axiosAuth = axios.create();
   

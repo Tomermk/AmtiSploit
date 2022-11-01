@@ -1,19 +1,15 @@
-import React,{useState, useRef, useEffect} from 'react'
-import axios from 'axios';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React,{useState, useRef, useEffect, useContext} from 'react';
 import { LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Card } from 'antd';
+import { AuthContext } from './context/AuthContext';
 import logo from './assets/react.svg'
 import './App.css'
 
 function Login() {
-  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const location = useLocation();
   const userRef = useRef(null);
+  const {loginUser, error, loading,setError ,setLoading} = useContext(AuthContext);
 
   useEffect( () => {
     if(userRef.current) {
@@ -21,28 +17,9 @@ function Login() {
     }
   },[userRef]);
 
-  const onFinish = async() => {
-    try {
-      setLoading(false);
-      const res = await axios.post("http://localhost:3000/login", {username,password});
-      const jwt = res.data.accessToken;
-      const refresh = res.data.refreshToken;
-      setUsername("res.data.username");
-      localStorage.setItem("authorization", JSON.stringify(jwt));
-      localStorage.setItem("refresh", JSON.stringify(refresh));
-      if(location.state) {
-        navigate("/",{state: {collapsed: location.state.collapsed}});
-      } else {
-        navigate("/");
-      }
-    } catch (err) {
-      if(err.response) {
-        console.log(err.response.data);
-        setError(err.response.data);
-      } else {
-        console.log(err);
-      }
-    }
+  const onFinish = async(e) => {
+    loginUser(e);
+    setLoading(false);
   };
 
   const onFinishFailed = () => {
