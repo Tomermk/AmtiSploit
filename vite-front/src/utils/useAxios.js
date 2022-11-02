@@ -14,14 +14,13 @@ const useAxios = () => {
 
     const refreshToken = async  () => {
         try {
-          console.log("Im in function")
           const res = await axios.post(`${baseURL}/login/refresh`, 
           {refreshToken: reToken});
           setToken(res.data.accessToken);
           setReToken(res.data.refreshToken);
           return res.data;
         } catch (err) {
-          if(err.response) {
+          if(err.response) { 
             console.log(err.response.data);
           } else {
             console.log(err);
@@ -30,11 +29,9 @@ const useAxios = () => {
       }
 
     axiosAuth.interceptors.request.use(async req => {
-    console.log("Im in interceptor")
     let currentDate = new Date();
     const decodedToken = jwt_decode(token);
     if(decodedToken.exp * 1000 < currentDate.getTime()) {
-        console.log("I'm in refresh before function")
         const data = await refreshToken();
         req.headers["Authorization"] = "Bearer " + data.accessToken;
     }
