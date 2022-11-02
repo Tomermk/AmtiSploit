@@ -26,14 +26,16 @@ mysql.createConnection({
         Vulnerabilities.create({
             name: "Log4Shell",
             description: "Log4Shell is a vulnerability in the Apache Log4j library that allows remote code execution.",
-            script: "docker run -p 8888:8888 -p 1389:1389 --e=IP=%hostname% --name log4shell ghcr.io/wh1t3h47/log4shell:latest \n docker run -p 8088:8088 ..."
+            script: 'docker run --name ldapdummyl4s -d -p 8888:8888 -p 1389:1389 -e "ENV_IP=host.docker.internal" ldapdummy:l4s\ndocker run --name attackerl4s -v %ATTACKFILESPATH%:/app -e "ENDPOINT=%HOSTNAME%" -p 8088:8088 --network=host attacker:l4s',
+            cleanupScript: 'docker rm -f ldapdummyl4s attackerl4s'
         }).then(() => {
             console.log("Log4Shell vulnerability created")
         }).catch((err) => {console.log(err)});
         Vulnerabilities.create({
             name: "BlueKeep",
             description: "BlueKeep is a vulnerability in the Remote Desktop Protocol (RDP) that allows remote code execution.",
-            script: "docker run -p 3389:3389 --e=IP=%hostname% --name bluekeep ghcr.io/wh1t3h47/log4shell:latest"
+            script: "docker run -p 3389:3389 --e=IP=%hostname% --name bluekeep ghcr.io/wh1t3h47/log4shell:latest",
+            cleanupScript: "asdfasdf"
         }).then(() => {
             console.log("BlueKeep vulnerability created")
         }).catch((err) => {console.log(err)});
