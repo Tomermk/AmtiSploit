@@ -13,10 +13,7 @@ const [theme, setTheme] = useState('dark');
 
   const items = [
     { label: 'Dashboard', key: '/', icon: <PieChartOutlined />},
-    { label: 'Attack Vector', key: '/attack', icon: <BugOutlined />, children: [
-      {label: 'Launch attack', key: '/attack1'},
-      {label: 'Option 6', key: '/attack2'}
-    ]},
+    { label: 'Exploits management', key: '/attack', icon: <BugOutlined />},
     { label:'Settings',key: 'sub4', icon: <SettingOutlined/>, children: [
       {label: 'Users', key: '9', icon: <UserOutlined/>},
       {label: 'Permissions',key: '10', icon: <UnlockOutlined/>}
