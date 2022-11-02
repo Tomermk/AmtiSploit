@@ -1,6 +1,6 @@
 const { exec } = require("child_process");
 const fs = require('fs');
-const Vulnerabilities = require("../models/vulnerabilities.model");
+
 
 
 const executeScript = (script) => {
@@ -28,7 +28,7 @@ const executeScript = (script) => {
 
 const cleanup = (cleanupScript,logFilePath) => {
     try {
-        executeScript(cleanupScript)
+        await executeScript(cleanupScript)
         if(fs.existsSync(logFilePath)){  
             fs.unlinkSync(logFilePath)
         }
