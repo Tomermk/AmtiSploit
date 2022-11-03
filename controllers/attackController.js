@@ -1,7 +1,7 @@
 const { response } = require("express");
 const fs = require('fs');
 const {executeScript,cleanup,testExec} = require("../handlers/attack");
-const { getVulnerability, setExploitStatus, newExploit} = require("../handlers/vulnerabilities");
+const { getVulnerability, setExploitStatus, setExploitErrorMsg, newExploit} = require("../handlers/vulnerabilities");
 
 const launchAttack = async (req, res = response) => {
     console.log(req.body.attackname);
@@ -43,7 +43,11 @@ const launchAttack = async (req, res = response) => {
         res.status(200).json("attack launched");
     }
     catch(error){
-        console.log(error)
+        setExploitErrorMsg(exploit.dataValues.id,error.message)
+        console.log("##################")
+        console.log(error.message)
+        console.log("##################")
+
         setExploitStatus(exploit.dataValues.id,4)
         cleanup(cleanupScript,logFilePath)
         res.status(500).json(error.message);

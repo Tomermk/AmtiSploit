@@ -1,8 +1,6 @@
 const { exec } = require("child_process");
 const fs = require('fs');
 
-
-
 const executeScript = (script) => {
     return new Promise((resolve,reject) => {
         scriptLines = script.split('\n')
@@ -28,7 +26,7 @@ const executeScript = (script) => {
 
 const cleanup = (cleanupScript,logFilePath) => {
     try {
-        await executeScript(cleanupScript)
+        executeScript(cleanupScript)
         if(fs.existsSync(logFilePath)){  
             fs.unlinkSync(logFilePath)
         }
