@@ -48,6 +48,23 @@ const setExploitStatus = async (id,status) => {
     }
 }
 
+const setExploitErrorMsg = async (id,ErrorMsg) => {
+  try {
+      const updatedRow = await Exploits.update(
+          {
+            errormsg: ErrorMsg,
+          },
+          {
+            where: { id: id },
+          }
+        );
+      return updatedRow;
+  } catch(error) {
+    console.error(error);
+    return null;
+  }
+}
+
 const newExploit = async (host,attack,status) => {
     try {
         const exploit = await Exploits.create({
@@ -69,5 +86,6 @@ module.exports = {
     getVulnerability,
     getAllExploits,
     setExploitStatus,
+    setExploitErrorMsg,
     newExploit,
 };
