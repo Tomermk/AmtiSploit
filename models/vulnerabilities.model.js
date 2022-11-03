@@ -16,6 +16,10 @@ const Vulnerabilities = sequelize.define("Vulnerabilities", {
         type: DataTypes.STRING,
         allowNull: false
     },
+    cleanupScript: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
 },{
     tableName: 'Vulnerabilities',
     timestamps: false,

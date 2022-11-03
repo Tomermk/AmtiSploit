@@ -1,13 +1,21 @@
 const {Router} = require('express');
 const { getVulnerabilities, getExploits } = require("../controllers/vulnController");
+const {check,body} = require("express-validator");
+const {validateInput} = require("../middleware/validate-login");
+const {launchAttack} = require("../controllers/attackController")
+
 const router = Router();
 
 
-router.post("/", (req, res) => {
-    console.log(req.body.attackname);
-    console.log(req.body.hostname);
-    res.status(200).json({message: "O.K."});
-});
+router.post("/",[
+        check("attackname", "attackname is required").not().isEmpty(),
+        check("hostname", "hostname is required").not().isEmpty(),
+        validateInput,
+    ],
+    launchAttack
+);
+
+
 
 router.get("/",
 [],
@@ -18,3 +26,8 @@ router.get("/exploits",
 getExploits);
 
 module.exports = router;
+
+
+
+// functions
+
