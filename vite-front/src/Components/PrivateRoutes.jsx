@@ -1,8 +1,9 @@
+import {useContext} from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
-import useAxios from '../utils/useAxios';
+import { AuthContext } from '../context/AuthContext'
 
 const PrivateRoutes = () => {
-    let token = localStorage.getItem('authorization');
+    const {token} = useContext(AuthContext);
     let auth = {'token':false};
     if (token) auth = {'token':true};
     return (

@@ -2,11 +2,13 @@ import axios from "axios";
 import  jwt_decode  from "jwt-decode";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const baseURL = "http://localhost:3000";
 
 const useAxios = () => {
     const { token, reToken, setToken, setReToken } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const axiosAuth = axios.create({
         headers: {Authorization: `Bearer ${token}`}
@@ -16,9 +18,14 @@ const useAxios = () => {
         try {
           const res = await axios.post(`${baseURL}/login/refresh`, 
           {refreshToken: reToken});
-          setToken(res.data.accessToken);
-          setReToken(res.data.refreshToken);
-          return res.data;
+          if(res.status === 200) {
+            setToken(res.data.accessToken);
+            setReToken(res.data.refreshToken);
+            return res.data;
+          }
+          else {
+            navigate("/login");
+          }
         } catch (err) {
           if(err.response) { 
             console.log(err.response.data);
@@ -30,12 +37,15 @@ const useAxios = () => {
 
     axiosAuth.interceptors.request.use(async req => {
     let currentDate = new Date();
-    const decodedToken = jwt_decode(token);
+    try{
+      const decodedToken = jwt_decode(token);
     if(decodedToken.exp * 1000 < currentDate.getTime()) {
         const data = await refreshToken();
         req.headers["Authorization"] = "Bearer " + data.accessToken;
+    }} catch(err) {
+        navigate("/login");
     }
-    return req;
+      return req;
     },(error) => {
     return Promise.reject(error);
     });
