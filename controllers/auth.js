@@ -13,7 +13,6 @@ const login = async (req, res = response) => {
 
       const token = generateAccessToken(user?.userName, user?.userRole);
       const refreshToken = generateRefreshToken(user?.userName, user?.userRole);
-      // save refresh to database
       res.status(200).json({
         accessToken: `${token}`,
         refreshToken: `${refreshToken}`,
@@ -27,13 +26,10 @@ const login = async (req, res = response) => {
 
 
 const refresh = async (req, res = response) => {
-  const { token } = req.body;
   const data = req.data;
-  // delete refresh token from database
   console.log(data);
   const newAccessToken = generateAccessToken(data.username, data.role);
   const newRefreshToken = generateRefreshToken(data.username, data.role);
-  // add new refresh token to database
   res.status(200).json({
     accessToken: newAccessToken,
     refreshToken: newRefreshToken

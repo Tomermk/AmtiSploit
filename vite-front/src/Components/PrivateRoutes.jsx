@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom'
+import useAxios from '../utils/useAxios';
 
 const PrivateRoutes = () => {
     let token = localStorage.getItem('authorization');
