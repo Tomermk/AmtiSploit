@@ -1,8 +1,7 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Button, Form, Input, Select, Typography } from "antd";
 import ExploitSelector from "./Components/ExploitSelector";
 import ExploitTable from "./Components/ExploitTable";
-import { AuthContext } from "./context/AuthContext";
 import useSWR from "swr";
 import useAxios from "./utils/useAxios";
 import "./AttackPage.css";
@@ -10,7 +9,7 @@ import "./AttackPage.css";
 export default function AttackPage() {
   const axiosAuth = useAxios();
   const [host, setHost] = useState("");
-  const {token} = useContext(AuthContext);
+  const [protocol, setProtocol] = useState("http://");
   const [attackName, setAttackName] = useState("Log4Shell");
   const fetcher = url => axiosAuth.get(url).then(res => res.data)
   const { data, error } = useSWR("http://localhost:3000/launch",fetcher);
@@ -19,13 +18,19 @@ export default function AttackPage() {
     setAttackName(value);
   }
 
+  function handleLaunchClick() {
+    const hostname = protocol + host;
+    console.log(hostname);
+    axiosAuth.post("http://localhost:3000/launch", {'attackname': attackName,'hostname': hostname});
+  }
+
   const { Title } = Typography;
   const { Option } = Select;
 
   const selectBefore = (
-    <Select defaultValue="http://" className="select-before">
-      <Option value="http">http://</Option>
-      <Option value="https">https://</Option>
+    <Select defaultValue={protocol} className="select-before" onChange={(value) => setProtocol(value)}>
+      <Option value="http://">http://</Option>
+      <Option value="https://">https://</Option>
     </Select>
   );
 
@@ -52,7 +57,7 @@ export default function AttackPage() {
               onSelectChange={handleSelectChange}
             />
           )}
-          <Button type="primary">Launch</Button>
+          <Button type="primary" onClick={handleLaunchClick}>Launch</Button>
         </Form>
       </div>
       <ExploitTable />

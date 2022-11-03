@@ -23,8 +23,9 @@ const launchAttack = async (req, res = response) => {
     }
     
     try{
-        await executeScript(script)
-        
+        const test = await executeScript(script)
+        if (test){
+
         var count = 0
         const inter = setInterval(() => {
             count = count + 1
@@ -41,15 +42,18 @@ const launchAttack = async (req, res = response) => {
             }
         }, 10000);
         res.status(200).json("attack launched");
+    } else {
+        throw new Error("attack failed");
     }
-    catch(error){
-        setExploitErrorMsg(exploit.dataValues.id,error.message)
+    } catch(error) {
+        console.log("I am here@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        const test = await setExploitErrorMsg(exploit.dataValues.id,error.message)
         console.log("##################")
         console.log(error.message)
         console.log("##################")
 
-        setExploitStatus(exploit.dataValues.id,4)
-        cleanup(cleanupScript,logFilePath)
+        await setExploitStatus(exploit.dataValues.id,4)
+        await cleanup(cleanupScript,logFilePath)
         res.status(500).json(error.message);
     }
 };
