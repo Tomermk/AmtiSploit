@@ -11,6 +11,7 @@ const useAxios = () => {
     const navigate = useNavigate();
 
     const axiosAuth = axios.create({
+        baseURL,
         headers: {Authorization: `Bearer ${token}`}
     });
 
