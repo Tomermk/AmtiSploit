@@ -11,10 +11,9 @@ export default function AttackPage() {
   const [host, setHost] = useState("");
   const [protocol, setProtocol] = useState("http://");
   const [attackName, setAttackName] = useState("Log4Shell");
-  const {mutate}  = useSWRConfig();
   const fetcher = url => axiosAuth.get(url).then(res => res.data)
   const { data: attacks} = useSWR("/launch",fetcher);
-  const { data: tableData} = useSWR("/launch/exploits",fetcher, { refreshInterval: 5000 });
+  const { data: tableData, mutate} = useSWR("/launch/exploits",fetcher, { refreshInterval: 5000 });
 
 
   function handleSelectChange(value) {
@@ -25,10 +24,10 @@ export default function AttackPage() {
     const hostname = protocol + host;
     console.log(hostname);
     axiosAuth.post("/launch", {'attackname': attackName,'hostname': hostname});
-    mutate("/launch/exploits", async table => {
-      const updateTable = await fetcher("/launch/exploits");
-      return updateTable;
-    });
+    const newID = tableData.length + 1;
+    const newData = {id: newID, host: hostname, attack: attackName, status: 2, createdAt: new Date().toLocaleString(), errormsg: ""};
+    const newTableData = [...tableData, newData];
+    mutate([...tableData,newData], false);
   }
 
   const { Title } = Typography;
