@@ -1,5 +1,6 @@
 const { exec } = require("child_process");
 const fs = require('fs');
+var ping = require('ping');
 
 const executeScript = async (script) => {
     try{
@@ -27,6 +28,15 @@ const executeScript = async (script) => {
     }
 };
 
+const isHostOnline = async (host) => {
+    let res = await ping.promise.probe(host);
+    return res
+};
+
+
+
+
+
 
 const cleanup = async (cleanupScript,logFilePath) => {
     try {
@@ -48,4 +58,5 @@ const cleanup = async (cleanupScript,logFilePath) => {
 module.exports = {
     executeScript,
     cleanup,
+    isHostOnline,
 };
