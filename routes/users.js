@@ -13,7 +13,7 @@ router.get("/:userID",
     getUserByID
 );
 
-router.post("/changePassword",
+router.post("/:userID/changePassword",
     changePassword 
 );
 

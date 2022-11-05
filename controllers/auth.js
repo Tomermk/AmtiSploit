@@ -11,8 +11,8 @@ const login = async (req, res = response) => {
     const pass = await checkPasswordFromDB({ password,passwordHash, passwordSalt });
     if (pass) {
 
-      const token = generateAccessToken(user?.userName, user?.userRole);
-      const refreshToken = generateRefreshToken(user?.userName, user?.userRole);
+      const token = generateAccessToken(user?.userName, user?.userRole, user?.id);
+      const refreshToken = generateRefreshToken(user?.userName, user?.userRole, user?.id);
       res.status(200).json({
         accessToken: `${token}`,
         refreshToken: `${refreshToken}`,
