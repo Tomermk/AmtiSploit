@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { getAllVulnerabilities, getAllExploits } = require("../handlers/vulnerabilities");
+const { getAllVulnerabilities, getAllExploits, getExploitsByStatus } = require("../handlers/vulnerabilities");
 
 const getVulnerabilities = async (req, res = response) => {
     const exploits = await getAllVulnerabilities();
@@ -11,7 +11,13 @@ const getExploits = async (req, res = response) => {
     res.status(200).json(exploits);
     };
 
+const getVulnsStatus = async (req, res = response) => {
+    const exploits = await getExploitsByStatus();
+    res.status(200).json(exploits);
+    };
+
 module.exports = {
     getVulnerabilities,
     getExploits,
+    getVulnsStatus,
 };
