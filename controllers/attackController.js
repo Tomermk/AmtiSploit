@@ -18,7 +18,9 @@ const launchAttack = async (req, res = response) => {
             var script = vulnerability.dataValues.script
             var cleanupScript = vulnerability.dataValues.cleanupScript
             attackFilesPath = `${__dirname.replace("controllers","attackFiles")}/${req.body.attackname}`
+            attackFilesPath = "\""+attackFilesPath+"\"";
             logFilePath = `${attackFilesPath}/${ip.replaceAll('.','-')}.txt`
+            logFilePath = logFilePath.replaceAll(/"/g,'')
             script = script.replace("%HOSTNAME%",req.body.hostname).replace("%ATTACKFILESPATH%",attackFilesPath)
             scriptLines = script.split('\n')
             cleanupScriptLines = cleanupScript.split('\n')
@@ -36,14 +38,15 @@ const launchAttack = async (req, res = response) => {
             const inter = setInterval(() => {
                 count = count + 1
                 console.log(count)
+                console.log(logFilePath)
                 if (fs.existsSync(logFilePath)){
                     clearInterval(inter)
-                    setExploitStatus(exploit.dataValues.id,1)
+                    setExploitStatus(exploit.dataValues.id,3)
                     cleanup(cleanupScript,logFilePath)
                 }
                 if (count == 3){
                     clearInterval(inter)
-                    setExploitStatus(exploit.dataValues.id,3)
+                    setExploitStatus(exploit.dataValues.id,1)
                     cleanup(cleanupScript,logFilePath)
                 }
             }, 10000);
@@ -53,7 +56,7 @@ const launchAttack = async (req, res = response) => {
         }
         } catch(error) {
             console.log("I am here@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            const test = await setExploitErrorMsg(exploit.dataValues.id,error.message)
+            await setExploitErrorMsg(exploit.dataValues.id,error.message)
             console.log("##################")
             console.log(error.message)
             console.log("##################")

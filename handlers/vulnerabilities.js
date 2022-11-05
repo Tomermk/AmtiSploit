@@ -82,7 +82,7 @@ const newExploit = async (host,attack,status) => {
 
 
 
-const getExploitsByStatus = async () => {
+const getExploitsWithStatus = async () => {
     try {
         const exploits = await Exploits.findAll({attributes: [
             'attack',
@@ -92,12 +92,29 @@ const getExploitsByStatus = async () => {
           group: ['attack', 'status'],
           raw: true
         });
-        console.log(exploits);
         return exploits;
     } catch(error) {
       console.error(error);
       return null;
     }
+}
+
+
+const getHostsWithStatus = async () => {
+  try {
+      const hostStatus = await Exploits.findAll({attributes: [
+          'host',
+          'status',
+          [Sequelize.fn('COUNT', Sequelize.col('status')), 'status_count'],
+        ],
+        group: ['host', 'status'],
+        raw: true
+      });
+      return hostStatus;
+  } catch(error) {
+    console.error(error);
+    return null;
+  }
 }
 
 module.exports = {
@@ -107,5 +124,6 @@ module.exports = {
     setExploitStatus,
     setExploitErrorMsg,
     newExploit,
-    getExploitsByStatus,
+    getExploitsWithStatus,
+    getHostsWithStatus,
 };
