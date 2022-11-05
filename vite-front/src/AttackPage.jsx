@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Button, Form, Input, Select, Typography } from "antd";
+import { Button, Form, Input, Select, Typography, message } from "antd";
 import ExploitSelector from "./Components/ExploitSelector";
 import ExploitTable from "./Components/ExploitTable";
-import useSWR, {useSWRConfig} from "swr";
+import useSWR from "swr";
 import useAxios from "./utils/useAxios";
 import "./AttackPage.css";
 
@@ -22,12 +22,13 @@ export default function AttackPage() {
 
   function handleLaunchClick() {
     const hostname = protocol + host;
-    console.log(hostname);
-    axiosAuth.post("/launch", {'attackname': attackName,'hostname': hostname});
+    axiosAuth.post("/launch", {'attackname': attackName,'hostname': hostname}).then(res => {
     const newID = tableData.length + 1;
     const newData = {id: newID, host: hostname, attack: attackName, status: 2, createdAt: new Date().toLocaleString(), errormsg: ""};
-    const newTableData = [...tableData, newData];
     mutate([...tableData,newData], false);
+    }).catch(err => {
+      message.error(err.response.data.errors[0].msg);
+    });
   }
 
   const { Title } = Typography;
