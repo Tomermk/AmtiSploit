@@ -11,7 +11,7 @@ const launchAttack = async (req, res = response) => {
     
     connectionRes = await isHostOnline(ip)
     if(connectionRes.alive == false){
-        res.status(500).json("host is unavailable");
+        res.status(400).send({'errors':[{'msg':'Host is unavailable'}]});
     }else{
         try{
             const vulnerability = await getVulnerability(req.body.attackname);
@@ -27,7 +27,7 @@ const launchAttack = async (req, res = response) => {
             var exploit = await newExploit(req.body.hostname,req.body.attackname,'2')
         }
         catch(error){
-            res.status(500).json(error.message);
+            res.status(400).json(error.message);
         }
         
         try{
