@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const { getVulnsStatus, getHostsVulnsStatus } = require("../controllers/vulnController");
+const { getVulnsStatus, getHostsVulnsStatus, getAttacksWithDates } = require("../controllers/vulnController");
 
 const router = Router();
 
@@ -11,6 +11,11 @@ router.get("/vulnsStatus",
 
 router.get("/hostsVulnsStatus",
     getHostsVulnsStatus
+);
+
+
+router.get("/attacksWithDates",
+    getAttacksWithDates
 );
 
 module.exports = router;
