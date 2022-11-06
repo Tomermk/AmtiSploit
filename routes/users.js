@@ -14,18 +14,19 @@ router.get("/:userID",
 );
 
 router.post("/:userID/changePassword",
+    //Input validation
     changePassword 
 );
 
 
 
-router.post("/:userId/forgetPassword", function (req, res) {
+// router.post("/:userId/forgetPassword", function (req, res) {
 
-});
+// });
 
-router.post("/:userId/changeForgottenPassword", function (req, res) {
+// router.post("/:userId/changeForgottenPassword", function (req, res) {
 
-});
+// });
 
 
 module.exports = router;

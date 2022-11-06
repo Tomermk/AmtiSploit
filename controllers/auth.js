@@ -1,16 +1,14 @@
 const { response } = require("express");
 const { generateAccessToken, generateRefreshToken } = require("../utils/token-generator");
-const { getUserFromDB, checkPasswordFromDB } = require(".././handlers/users");
+const { getUserFromDB, validatePassword} = require(".././handlers/users");
 
 const login = async (req, res = response) => {
   const { username, password } = req.body;
-  const user = await getUserFromDB({ username });
+  const user = await getUserFromDB(username)
 
   if (user) {
-    const { passwordHash, passwordSalt } = user;
-    const pass = await checkPasswordFromDB({ password,passwordHash, passwordSalt });
+    const pass = await validatePassword(username,password)
     if (pass) {
-
       const token = generateAccessToken(user?.userName, user?.userRole, user?.id);
       const refreshToken = generateRefreshToken(user?.userName, user?.userRole, user?.id);
       res.status(200).json({
@@ -20,8 +18,8 @@ const login = async (req, res = response) => {
         username: user?.userName,
         role: user?.userRole
       }); 
-    } else res.status(401).json("Invalid password");
-  } else res.status(401).json("Invalid username");
+    } else res.status(401).json("Invalid username or password");
+  } else res.status(401).json("Invalid username or password");
 };
 
 

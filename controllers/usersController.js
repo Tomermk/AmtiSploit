@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { getAllUsersFromDB, getUserByIDFromDB, isPasswordComplexed, isPasswordUsed } = require(".././handlers/users");
+const { getAllUsersFromDB, getUserByIDFromDB, isPasswordComplexed, isPasswordUsed,validatePassword,changePasswordInDB } = require(".././handlers/users");
 const PWDTool = require("../utils/passwords");
 
 
@@ -20,30 +20,33 @@ const changePassword = async (req, res = response) => {
         console.log('validating permissions')
         var isAdmin = req.data.role == "Admin"
         if(req.params.userID == req.data.userid || isAdmin){
+            console.log('validating password')            
+            var isValid = await validatePassword(req.body.username,req.body.oldPassword)
+            console.log(isValid)
+            if(isValid == false){
+                res.status(400).send("Incorrect Password")
+                return
+            }
+            
             console.log('validating complexity')
-            var isPasswordComplexed = isPasswordComplexed(req.body.newPassword)
-            
-            console.log('validating history')
-            var isPasswordUsed = isPasswordUsed(req.body.newPassword)
-            
-            console.log('validating password')
-            
-            if(validatePassword(req.body.username,req.body.oldPassword) == false){
-                res.status(500).send("Incorrect Password");
+            var isComplexed = isPasswordComplexed(req.body.newPassword)
+            if(!isComplexed){
+                res.status(400).json("Password does not meet complexity requierments")
+                return
             }
             
-            if(isPasswordComplexed == false){
-                console.log("Password does not meet complexity requierments")
-                res.status(500).send("Password does not meet complexity requierments");
+            console.log('validating history')            
+            var isUsed = await isPasswordUsed(req.body.username,req.body.newPassword)
+            if(isUsed){
+                res.status(400).send("Password does not meet password history requierments")
+                return
             }
-            
-            if(isPasswordUsed == true){
-                console.log("Password does not meet password history requierments")
-                res.status(500).send("Password does not meet password history requierments");
-            }
+
+
             
             console.log('changing password')
-            await changePassword(req.body.username,req.body.newPassword)
+            await changePasswordInDB(req.body.username,req.body.newPassword)
+            
             res.status(200).json("OK")
         }
         else{

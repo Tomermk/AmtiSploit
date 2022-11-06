@@ -10,7 +10,7 @@ const PasswordHistory = require('../models/passhistory.model');
 const Users = require("../models/users.model");
 
 
-const getUserFromDB = async ({ username }) => {
+const getUserFromDB = async (username) => {
     try {
         const user = await Users.findOne({ where: { userName: username } })
         return user;
@@ -43,17 +43,22 @@ const checkPasswordFromDB = ({ password,passwordHash, passwordSalt }) => {
     return PWDTool.validatePassword(password,passwordHash,passwordSalt);
 };
 
-const validatePassword = async (password, username) => {
+const validatePassword = async (username,password ) => {
   const res = await Users.findOne({attributes: ['passwordHash','passwordSalt'], where: {userName: username}})
   const hmac = crypto.createHmac('sha256', password).update(res.passwordSalt).digest('hex')
-  if (res.passwordHash == hmac){
+  return validatePasswordHashAndSalt(password,res.passwordHash,res.passwordSalt)
+}
+
+const validatePasswordHashAndSalt =  (password,passwordHash,passwordSalt ) => {
+  const hmac = crypto.createHmac('sha256', password).update(passwordSalt).digest('hex')
+  if (passwordHash == hmac){
       return true
   } else{
       return false
   }
 }
 
-const changePassword = async (username,password) => {
+const changePasswordInDB = async (username,password) => {
   var passRes = calculateHmacAndSalt(password)
   passwordHash = passRes.hmac
   salt = passRes.salt
@@ -66,11 +71,11 @@ const changePassword = async (username,password) => {
       where: { userName: username },
     }
   )
-  archivePassword(username,passwordHash,salt)
+  await archivePassword(username,passwordHash,salt)
   console.log(`Password changed for '${username}'`)
 };
 
-const calculateHmacAndSalt = () => {
+const calculateHmacAndSalt = (password) => {
   //salt
   const salt = crypto.randomBytes(16).toString('hex')
   //hmac
@@ -81,55 +86,55 @@ const calculateHmacAndSalt = () => {
 const archivePassword = async (username,passwordHash,salt) => {
   await PasswordHistory.create({
       userName: username,
-      passwordHash: `${passwordHash}`,
-      passwordSalt: `${salt}`,
-  }).then((result) => {
-      console.log(result);
-  }).catch((error) => {
-      console.error('Failed to create a new record : ', error);
-  });
+      passwordHash: passwordHash,
+      passwordSalt: salt,
+  })
 };
 
-const isPasswordUsed = async (username, passwordHash, passwordSalt) => {
-  const results = await PasswordHistory.findAll(
-    {
-      attributes: ['passwordHash','passwordSalt'],
-      where: {
-        userName: username
-      },
-      order: ['created', 'DESC'],
-      limit: PWD_HISTORY_CONFIG.history
-    }
-  )
+const isPasswordUsed = async (username,password) => {
   try{
-      results.forEach(it => {if (validatePassword(password,passwordHash,passwordSalt)) throw 'used' });    
-  } catch (e){
-      if (e === 'used') return false
+    
+    const results = await PasswordHistory.findAll(
+      {
+        attributes: ['passwordHash','passwordSalt'],
+        where: {
+          userName: username
+        },
+        order: [['createdAt', 'DESC']],
+        limit: PWD_HISTORY_CONFIG.history
+      }
+    )
+    results.forEach( it => {
+      if ( validatePasswordHashAndSalt(password,it.passwordHash,it.passwordSalt)) throw 'used' 
+    });
+    return false
+  } catch (error){
+    console.log(error)
+    if (error === 'used') return true
   }
-  return true
+  
 }
 
 const isPasswordComplexed = (password) => {
-  return true
   var passwordValidation = passwordComplexity(PWD_CONFIG).validate(password)
   if(passwordValidation.hasOwnProperty('error')) return false
   else return true    
 }
 
-const isPendingPasswordReset = async (username) => {
-  // VALIDATE
-  var results = databaseConnection.query(`SELECT userName FROM forgetPassword WHERE userName = '${username}'`)
-  if(results.length != 0) return true
-  else return false
-}
+// const isPendingPasswordReset = async (username) => {
+//   // VALIDATE
+//   var results = databaseConnection.query(`SELECT userName FROM forgetPassword WHERE userName = '${username}'`)
+//   if(results.length != 0) return true
+//   else return false
+// }
 
 module.exports = {
   getUserFromDB,
   checkPasswordFromDB,
   getUserByIDFromDB,
   getAllUsersFromDB,
-  changePassword,
+  changePasswordInDB,
   isPasswordUsed,
   isPasswordComplexed,
-  isPendingPasswordReset,
+  validatePassword,
 };
