@@ -41,7 +41,7 @@ export default function PieChart({attackName, rawData, index}) {
 
   return (
     <Card title={attackName} key={index} bordered={false} bodyStyle={{ padding: '24px', display: 'flex', justifyContent: 'center'}}>
-        <Pie data={data} height="400px" options={{ responsive: false}}/>
+        <Pie data={data} height="400px" options={{ responsive: true}}/>
     </Card>
   )
 }

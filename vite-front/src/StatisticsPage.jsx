@@ -4,17 +4,17 @@ import useSWR from 'swr'
 import { Row, Col, Card, Skeleton} from 'antd'
 import { DotChartOutlined } from '@ant-design/icons'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, Title } from 'chart.js';
-import {Line} from 'react-chartjs-2';
-import {faker} from '@faker-js/faker';
 import PieChart from './Components/PieChart';
 import HostsPie from './Components/HostsPie';
+import VulnLine from './Components/VulnLine';
 
 
 function StatisticsPage() {
   const axiosAuth = useAxios();
   const fetcher = url => axiosAuth.get(url).then(res => res.data)
   const { data: vulnStats, loading: vulnStatsLoading, error: vulnStatsError} = useSWR("/statistics/vulnsStatus",fetcher);
-  const { data: hostStats, loading: hostsStatsLoading, error:hostsStatsError} = useSWR("/statistics/vulnsStatus",fetcher);
+  const { data: hostStats, loading: hostsStatsLoading, error:hostsStatsError} = useSWR("/statistics/hostsVulnsStatus",fetcher);
+  const { data: vulnDates, loading: vulnDatesLoading, error: vulnDatesError} = useSWR("/statistics/attacksWithDates",fetcher);
   ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement,ArcElement, Tooltip, Legend);
 
   const fetchAttackNames = () => {
@@ -26,32 +26,6 @@ function StatisticsPage() {
   }
 
   const attackNames = fetchAttackNames();
-
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-  };
-  
-  const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-  const data2 = {
-    labels,
-    datasets: [
-      {
-        label: 'Dataset 1',
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-        borderColor: 'rgb(255, 99, 132)',
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-      },
-      {
-        label: 'Dataset 2',
-        data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-        borderColor: 'rgb(53, 162, 235)',
-        backgroundColor: 'rgba(53, 162, 235, 0.5)',
-      },
-    ],
-  };
 
 
   return (
@@ -86,11 +60,7 @@ function StatisticsPage() {
         <HostsPie rawData={hostStats} loading={hostsStatsLoading} error={hostsStatsError} />
       </Row>
       <Row style={{ marginTop: '10px'}}>
-        <Col span={24}>
-          <Card title="Vulnerable over time" bordered={false} bodyStyle={{ padding: '24px'}} >
-            <Line options={options} data={data2} height='300px'/>
-          </Card>
-        </Col>
+        <VulnLine rawData={vulnDates} vulnNames={attackNames} loading={vulnDatesLoading} error={vulnDatesError} />
       </Row>
     </div>
   )
