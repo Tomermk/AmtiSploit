@@ -5,7 +5,8 @@ import {faker} from '@faker-js/faker';
 
 export default function VulnLine({rawData, vulnNames,loading, error}) {
 
-
+    const colors = ['rgb(255, 99, 132)','rgb(53, 162, 235)','rgb(255, 205, 86)','rgb(75, 192, 192)','rgb(153, 102, 255)','rgb(255, 159, 64)','rgb(201, 203, 207)']
+    const backColors = ['rgba(255, 99, 132, 0.5)','rgba(53, 162, 235, 0.5)','rgba(255, 205, 86, 0.5)','rgba(75, 192, 192, 0.5)','rgba(153, 102, 255, 0.5)','rgba(255, 159, 64, 0.5)','rgba(201, 203, 207, 0.5)']
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -52,44 +53,37 @@ export default function VulnLine({rawData, vulnNames,loading, error}) {
             return labels;
         }
 
-        const testLabels = createLabels();
+        const labels = createLabels();
 
         const createData = () => {
-            let data = [];
+            const dataSet = [];
             for (let i = 0; i < vulnNames.length; i++) {
-                data.push({
+                const data = [];
+                for( let j=0; j<labels.length; j++){
+                    let filteredDates = rawData.filter(current => current.attack == vulnNames[i] && new Date(current.createdAt).toLocaleDateString('en-GB') == labels[j]);
+                    data.push(filteredDates.length);
+                }
+                dataSet.push({
                     label: vulnNames[i],
-                    data: [faker.random.number(10), faker.random.number(10), faker.random.number(10), faker.random.number(10), faker.random.number(10), faker.random.number(10), faker.random.number(10), faker.random.number(10)],
+                    data: data,
                     fill: false,
-                    borderColor: faker.internet.color(),
-                    tension: 0.1
+                    borderColor: colors[i],
+                    backgroundColor: backColors[i],
                 })
             }
-            return data;
+            return dataSet;
         }
 
-        const data2 = {
-        labels: testLabels,
-        datasets: [
-            {
-            label: vulnNames[0],
-            data: testLabels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-            },
-            {
-            label: vulnNames[1],
-            data: testLabels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-            borderColor: 'rgb(53, 162, 235)',
-            backgroundColor: 'rgba(53, 162, 235, 0.5)',
-            },
-        ],
+
+        const data = {
+        labels,
+        datasets: createData(),
         };
 
     return (
             <Col span={24}>
             <Card title="Vulnerable over time" bordered={false} bodyStyle={{ padding: '24px'}} >
-                <Line options={options} data={data2} height='300px'/>
+                <Line options={options} data={data} height='300px'/>
             </Card>
             </Col>
         )
