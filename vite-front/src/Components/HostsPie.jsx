@@ -96,7 +96,7 @@ export default function HostsPie({rawData, loading, error}) {
 
     return (
         <Col span={8}>
-            <Card title={<SelectForPie/>} bordered={false} bodyStyle={{ padding: '24px', display: 'flex', justifyContent: 'center'}} >
+            <Card title={<SelectForPie/>} bordered={false} bodyStyle={{ padding: '24px', display: 'flex', justifyContent: 'center'}} headStyle={{height: '57px'}} >
                 <Pie data={data} height="400px" options={{responsive: true}}/>
             </Card>
         </Col>

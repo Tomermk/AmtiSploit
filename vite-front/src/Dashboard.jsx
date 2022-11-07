@@ -3,41 +3,23 @@ import SideMenu from './SideMenu'
 import StatisticsPage from './StatisticsPage'
 import NotFound from './NotFound';
 import AttackPage from './AttackPage';
-import {Routes,Route,useNavigate, useLocation } from "react-router-dom"
+import UsersManagement from './UsersManagement';
+import {Routes,Route,useNavigate} from "react-router-dom"
 import { Layout } from 'antd';
 import { IdleTimerContainer } from './Components/idleTimerContainer';
-import axios from 'axios';
 import {AuthContext} from './context/AuthContext';
 import Logo from "./assets/logo_only.svg";
 const {Content, Sider} = Layout
 import './Dashboard.css'
 
 function Dashboard() {
-  const location = useLocation();
   const navigate = useNavigate();
-  const [current, setCurrent] = useState('/');
-  const [collapsed, setCollapsed] = useState(() => {
-    if(location.state){
-      return location.state.collapsed;
-    }
-    return false;
-  });
-  const {token, setToken} = useContext(AuthContext);
+  const {logoutUser, collapsed, setCollapsed, setCurrent} = useContext(AuthContext);
 
 
-  const handleMenuClick = async(target) =>{
+  const handleMenuClick = (target) =>{
     if( target.key === 'signout'){
-      try{
-        await axios.post("http://localhost:3000/logout",{},{
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-      });
-    } catch (err) {console.error(err)};
-      localStorage.clear();
-      setToken("");
-      navigate("/login", {state: {collapsed: collapsed}});
+      logoutUser();
     } else {
       setCurrent(target.key);
       navigate(target.key)
@@ -54,13 +36,14 @@ function Dashboard() {
               <img src={Logo}/>
             </object>
           </div>
-          <SideMenu current={current} onMenuClick={handleMenuClick}/>
+          <SideMenu onMenuClick={handleMenuClick}/>
         </Sider>
         <Layout className='site-layout'>
           <Content style={{ margin: '0 16px',}}>
             <Routes>
                 <Route exact path="/" element={<StatisticsPage/>}/>
                 <Route exact path="/attack" element={<AttackPage/>}/>
+                <Route exact path="/usersmgmt" element={<UsersManagement/>}/>
                 <Route path='/*' element={<NotFound/>} />
             </Routes>
           </Content>

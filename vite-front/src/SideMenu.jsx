@@ -1,5 +1,6 @@
 
-import React,{useState} from 'react'
+import {useState, useContext, useEffect} from 'react'
+import { AuthContext } from './context/AuthContext';
 import {Menu} from 'antd'
 import {PoweroffOutlined,BugOutlined, PieChartOutlined, SettingOutlined, UserOutlined, UnlockOutlined, MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons'
 import 'antd/dist/antd.css';
@@ -7,19 +8,33 @@ import 'antd/dist/antd.css';
 
 
 
-function SideMenu({current,onMenuClick}) {
+function SideMenu({onMenuClick}) {
 const [theme, setTheme] = useState('dark');
+const {user, current, setCurrent} = useContext(AuthContext);
 
+useEffect(() => {
+    console.log('current', current);
+    onMenuClick({key: current});
+}, [current])
 
-  const items = [
-    { label: 'Dashboard', key: '/', icon: <PieChartOutlined />},
-    { label: 'Exploits management', key: '/attack', icon: <BugOutlined />},
-    { label:'Settings',key: 'sub4', icon: <SettingOutlined/>, children: [
-      {label: 'Users', key: '9', icon: <UserOutlined/>},
-      {label: 'Permissions',key: '10', icon: <UnlockOutlined/>}
-    ] },
-    { label: 'Logout', key: 'signout',icon: <PoweroffOutlined/>, danger: true}
-  ];
+const items = [
+  { label: 'Dashboard', key: '/', icon: <PieChartOutlined />},
+  { label: 'Exploits management', key: '/attack', icon: <BugOutlined />},
+  { label:'Settings',key: 'settings', icon: <SettingOutlined/>, children: [
+    {label: 'Users', key: '/usersmgmt', icon: <UserOutlined/>},
+    {label: 'Permissions',key: '10', icon: <UnlockOutlined/>}
+  ] },
+  { label: 'Logout', key: 'signout',icon: <PoweroffOutlined/>, danger: true}
+];
+
+function checkAdmin() {
+  if(user.role !== 'Admin'){
+    const filteredItems = items.filter(item => item.label !== 'Settings');
+    return filteredItems;
+  }
+  return items;
+}
+let correctItems = checkAdmin();
 
 const changeTheme = (value) => {
     setTheme(value ? 'dark' : 'light');
@@ -32,9 +47,10 @@ const changeTheme = (value) => {
         onClick={(e) => onMenuClick(e)}
         defaultSelectedKeys={[current]}
         defaultOpenKeys={['/attack']}
+
         mode="inline"
         theme={theme}
-        items={items}
+        items={correctItems}
       />
     </>
   )

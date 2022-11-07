@@ -1,32 +1,30 @@
 import {createContext, useState, useEffect} from 'react'
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import  jwt_decode  from "jwt-decode";
 
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({children}) => {
-    const [token, setToken] = useState(() => localStorage.getItem('authorization') ? JSON.parse(localStorage.getItem('authorization')) : null);
-    const [reToken, setReToken] = useState(() => localStorage.getItem('refresh') ? JSON.parse(localStorage.getItem('refresh')) : null);
-    const [user, setUser] = useState("");
+    const [token, setToken] = useState(() => localStorage.getItem('refresh') ? JSON.parse(localStorage.getItem('refresh')) : "");
+    const [reToken, setReToken] = useState("");
+    const [user, setUser] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
-    const location = useLocation();
+    const [collapsed, setCollapsed] = useState(false);
+    const [current, setCurrent] = useState('/');
     const navigate = useNavigate();
 
     const loginUser = async (e) => {
         try {
             const res = await axios.post("http://localhost:3000/login", {'username': e.email,'password': e.password});
-            setUser(res.data.username);
-            setToken(res.data.accessToken);
-            setReToken(res.data.refreshToken);
+            const {accessToken, refreshToken} = res.data;
+            setToken(accessToken);
+            setReToken(refreshToken);
             localStorage.setItem('authorization', JSON.stringify(res.data.accessToken));
             localStorage.setItem('refresh', JSON.stringify(res.data.refreshToken));
-            if(location.state) {
-              navigate("/",{state: {collapsed: location.state.collapsed}});
-            } else {
-              navigate("/");
-            }
+            navigate("/");
           } catch (err) {
             setLoading(false);
             if(err.response) {
@@ -39,15 +37,23 @@ export const AuthProvider = ({children}) => {
     }
 
     const logoutUser =() => {
-          localStorage.clear();
-          setToken(null);
-          setReToken(null);
-          setUser(null);
-          navigate("/login", {state: {collapsed: collapsed}});
+        const {role, userid, username, ...rest} = user;
+        setUser({...rest});
+        localStorage.removeItem('authorization');
+        localStorage.removeItem('refresh');
+        setReToken("");
+        setToken("");
+        navigate("/login");
     }
+
 
     useEffect(() => {
         if(token) {
+          const decodedToken = jwt_decode(token);
+          if(decodedToken){
+            const {username, userid, role} = decodedToken;
+            setUser({...user, 'username': username, 'userid': userid, 'role': role});
+          }
             localStorage.setItem('authorization', JSON.stringify(token));
         } else {
             localStorage.setItem('refresh', JSON.stringify(reToken));
@@ -66,6 +72,10 @@ export const AuthProvider = ({children}) => {
         setError: setError,
         setToken: setToken,
         setReToken: setReToken,
+        collapsed: collapsed,
+        setCollapsed: setCollapsed,
+        current: current,
+        setCurrent: setCurrent,
     }
 
     return(

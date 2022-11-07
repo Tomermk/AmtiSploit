@@ -14,9 +14,11 @@ const login = async (req, res = response) => {
       res.status(200).json({
         accessToken: `${token}`,
         refreshToken: `${refreshToken}`,
-        userid: user?.id,
-        username: user?.userName,
-        role: user?.userRole
+        userData:{
+          userid: user?.id,
+          username: user?.userName,
+          role: user?.userRole
+        }
       }); 
     } else res.status(401).json("Invalid username or password");
   } else res.status(401).json("Invalid username or password");

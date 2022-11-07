@@ -82,7 +82,7 @@ export default function VulnLine({rawData, vulnNames,loading, error}) {
 
     return (
             <Col span={24}>
-            <Card title="Vulnerable over time" bordered={false} bodyStyle={{ padding: '24px'}} >
+            <Card title="Exploits over time" bordered={false} bodyStyle={{ padding: '24px'}} >
                 <Line options={options} data={data} height='300px'/>
             </Card>
             </Col>
