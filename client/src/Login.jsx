@@ -3,6 +3,7 @@ import { LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@a
 import { Button, Checkbox, Form, Input, Card } from 'antd';
 import { AuthContext } from './context/AuthContext';
 import logo from './assets/react.svg'
+import logo2 from './assets/logo-no-background.svg'
 import './App.css'
 
 function Login() {
@@ -47,7 +48,7 @@ function Login() {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
-          <img src={logo} alt='logo' style={{width: 100, paddingBottom: '20px'}} />
+          <img src={logo2} alt='logo' style={{width: 300, paddingBottom: '20px'}} />
           <Form.Item
             //label="username"
             name="username"

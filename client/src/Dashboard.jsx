@@ -9,6 +9,7 @@ import { Layout } from 'antd';
 import { IdleTimerContainer } from './Components/idleTimerContainer';
 import {AuthContext} from './context/AuthContext';
 import Logo from "./assets/logo_only.svg";
+import testLogo from "./assets/logo-no-background.svg";
 const {Content, Sider} = Layout
 import './Dashboard.css'
 
@@ -33,8 +34,8 @@ function Dashboard() {
       <Layout style={{ minHeight: '100vh',}}>
         <Sider collapsible collapsed={collapsed} onCollapse={(value => setCollapsed(value))}>
           <div className='logo'>
-            <object data={Logo} type="image/svg+xml" className='logoImage'>
-              <img src={Logo}/>
+            <object data={collapsed ? Logo : testLogo} type="image/svg+xml" className='logoImage' style={collapsed ? {} :{width: 150}}>
+              <img src={collapsed ? Logo : testLogo}/>
             </object>
           </div>
           <SideMenu onMenuClick={handleMenuClick}/>
