@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { getAllUsersFromDB, getUserByIDFromDB, isPasswordComplexed, isPasswordUsed,validatePassword,changePasswordInDB, deleteUserByIDFromDB } = require(".././handlers/users");
+const { getUserFromDB,getAllUsersFromDB, getUserByIDFromDB, isPasswordComplexed, isPasswordUsed,validatePassword,changePasswordInDB, deleteUserByIDFromDB, createUserInDB } = require(".././handlers/users");
 
 
 const getAllUsers = async (req, res = response) => {
@@ -49,7 +49,7 @@ const changeSelfPassword = async (req, res = response) => {
             res.status(200).json("OK")
         }
         else{
-            res.status(401).json("Unauthorized")
+            res.status(401).send({'errors':[{'msg':'Unauthorized'}]})
         }
     }
     catch(error){
@@ -118,10 +118,39 @@ const deleteUserbyID = async (req, res = response) => {
 };
     
 
+const createUser = async (req, res = response) => {
+    try{
+        const isAdmin = req.data.role == "Admin"
+        if(!isAdmin){
+            res.status(401).send({'errors':[{'msg':'Unauthorized'}]})
+        }
+        else{
+            var isComplexed = isPasswordComplexed(req.body.password)
+            if(!isComplexed){
+                res.status(400).send({'errors':[{'msg':'Password does not meet complexity requierments'}]})
+                return
+            }
+            
+            var user = await getUserFromDB(req.body.username);
+            if(user != null){
+                res.status(400).send({'errors':[{'msg':'Username already exists'}]})
+                return
+            }
+            await createUserInDB(req.body.username,req.body.password,req.body.role, req.body.email, req.body.firstname, req.body.lastname)
+            res.status(200).json("OK")
+        }
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).send(error)
+    }
+};
+
 module.exports = {
     getAllUsers,
     getUserByID,
     changeSelfPassword,
     changePassword,
     deleteUserbyID,
+    createUser,
 };

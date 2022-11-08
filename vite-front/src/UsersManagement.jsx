@@ -258,7 +258,7 @@ export default function UsersManagement() {
             footer={() => ""}
           />
         )}
-        <NewUserForm onOpen={newUserOpen} onCancel={handleCancel} />
+        <NewUserForm onOpen={newUserOpen} onCancel={handleCancel} testMessage={message} mutation={mutate}/>
         <ResetPasswordForm
           onOpen={updatePassOpen}
           onCancel={handleCancel}

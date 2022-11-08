@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Drawer, Space, Form, Input, Button, Row, Col, Select } from "antd";
+import useAxios from "../utils/useAxios";
 
-export default function NewUserForm({ onCancel, onOpen }) {
+export default function NewUserForm({ onCancel, onOpen, testMessage, mutation }) {
   const [userName, setUserName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -9,9 +10,40 @@ export default function NewUserForm({ onCancel, onOpen }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("User");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const { Option } = Select;
+  const axiosAuth = useAxios();
+
+  const handleSubmitClick = () => {
+    axiosAuth
+      .post("/users", {
+        'username': userName,
+        'password': password,
+        'role': role,
+        'email': email,
+        'firstname': firstName,
+        'lastname': lastName,
+      })
+      .then((res) => {
+        testMessage.success("User created successfully");
+        mutation('/users');
+        setUserName("");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setRole("User");
+        onCancel();
+      })
+      .catch((err) => {
+        if (err.response.status !== 500) {
+          testMessage.error(err.response.data.errors[0].msg);
+        } else {
+          testMessage.error("Internal server error");
+        }
+      });
+  };
+
 
   return (
     <Drawer
@@ -24,7 +56,7 @@ export default function NewUserForm({ onCancel, onOpen }) {
       extra={
         <Space>
           <Button onClick={onCancel}>Cancel</Button>
-          <Button onClick={onCancel} type="primary">
+          <Button onClick={handleSubmitClick} type="primary">
             Submit
           </Button>
         </Space>
