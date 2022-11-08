@@ -1,5 +1,5 @@
 const { response } = require("express");
-const { getUserFromDB,getAllUsersFromDB, getUserByIDFromDB, isPasswordComplexed, isPasswordUsed,validatePassword,changePasswordInDB, deleteUserByIDFromDB, createUserInDB } = require(".././handlers/users");
+const { getUserFromDB,getAllUsersFromDB, getUserByIDFromDB, isPasswordComplexed, isPasswordUsed,validatePassword,changePasswordInDB, deleteUserByIDFromDB, createUserInDB, updateUserRoleInDB } = require(".././handlers/users");
 
 
 const getAllUsers = async (req, res = response) => {
@@ -102,6 +102,7 @@ const deleteUserbyID = async (req, res = response) => {
         const isAdmin = req.data.role == "Admin"
         if(!isAdmin){
             res.status(401).json("Unauthorized")
+            return;
         }
         else if(req.data.userid == req.params.userID) {
             res.status(400).send({'errors':[{'msg':'Cannot delete yourself'}]});
@@ -146,6 +147,35 @@ const createUser = async (req, res = response) => {
     }
 };
 
+const updateUser = async (req, res = response) => {
+    try{
+        const isAdmin = req.data.role == "Admin"
+        if(!isAdmin){
+            res.status(401).send({'errors':[{'msg':'Unauthorized'}]})
+            return;
+        } else if(req.data.username == req.params.username) {
+            res.status(400).send({'errors':[{'msg':'Cannot Update your own role'}]});
+            return;
+        }
+        else{
+            var user = await getUserFromDB(req.body.username);
+            user = user.toJSON();
+            if(!user){
+                console.log("Error:",user);
+                res.status(400).send({'errors':[{'msg':"Username doesn't exists"}]})
+                return
+                }
+            }
+            console.log("ALl Good",user);
+            await updateUserRoleInDB(user.id,req.body.role)
+            res.status(200).json("OK")
+        }
+    catch(error){
+        console.log(error);
+        res.status(500).send(error)
+    }
+};
+
 module.exports = {
     getAllUsers,
     getUserByID,
@@ -153,4 +183,5 @@ module.exports = {
     changePassword,
     deleteUserbyID,
     createUser,
+    updateUser,
 };

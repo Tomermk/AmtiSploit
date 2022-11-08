@@ -28,7 +28,6 @@ export const AuthProvider = ({children}) => {
           } catch (err) {
             setLoading(false);
             if(err.response) {
-              console.log(err.response.data);
               setError(err.response.data);
             } else {
               console.log(err);
@@ -55,7 +54,9 @@ export const AuthProvider = ({children}) => {
             setUser({...user, 'username': username, 'userid': userid, 'role': role});
           }
             localStorage.setItem('authorization', JSON.stringify(token));
+            setToken(token);
         } else {
+            setReToken(reToken);
             localStorage.setItem('refresh', JSON.stringify(reToken));
         }
     }, [token, reToken]);

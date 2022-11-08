@@ -24,7 +24,6 @@ export default function ResetPasswordForm({ onOpen, onCancel, isCurrent, userId,
         setDestroyOnClose(true);
         onCancel();
       }).catch((err) => {
-        console.log(err);
         if(err.response.status === 400 || err.response.status === 401){
           message.error(err.response.data.errors[0].msg);
         }else{
@@ -42,7 +41,6 @@ export default function ResetPasswordForm({ onOpen, onCancel, isCurrent, userId,
         setDestroyOnClose(true);
         onCancel();
       }).catch((err) => {
-        console.log(err);
         if(err.response.status !== 500){
           message.error(err.response.data.errors[0].msg);
         }else{
