@@ -1,11 +1,28 @@
 import {useContext, useEffect, useState} from 'react'
-import { Space, Table} from 'antd';
+import { Space, Table, Select, Button, Typography} from 'antd';
+import { UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import useSWR from 'swr';
+import useAxios from './utils/useAxios';
 import {AuthContext} from './context/AuthContext';
+import NewUserForm from './Components/NewUserForm';
+import ResetPasswordForm from './Components/ResetPasswordForm';
 import "./UsersManagement.css"
 
+
 export default function UsersManagement() {
-    const {user, setCurrent} = useContext(AuthContext)
-    const [isAdmin, setIsAdmin] = useState(false);
+    const axiosAuth = useAxios();
+    const fetcher = url => axiosAuth.get(url).then(res => res.data)
+    const { data: users, loading, error} = useSWR("/users",fetcher);
+    const { user, setCurrent} = useContext(AuthContext)
+    const [ isAdmin, setIsAdmin] = useState(false);
+    const [ changedUsers, setChangedUsers] = useState({});
+    const [ userRoles, setUserRoles] = useState(users);
+    const [ newUserOpen, setNewUserOpen] = useState(false);
+    const [ updatePassOpen, setUpdatePassOpen] = useState(false);
+    const roles = ['Admin', 'User'];
+    const {Option} = Select;
+    const { Title } = Typography;
+
 
     useEffect(() => {
         if(user.role !== 'Admin'){
@@ -16,20 +33,52 @@ export default function UsersManagement() {
         }
     }, [])
 
-    const data = [
-        {
-          username: 'Admin',
-          role: 'Admin',
-        },
-        {
-            username: 'tomermk@gmail.com',
-            role: 'User',
-        },
-        {
-            username: 'Amitay Biton',
-            role: 'Admin',
-        },
-      ];
+    function handleNewUserClick(){
+        setUpdatePassOpen(false);
+        setNewUserOpen(true);
+    }
+
+    function handleUpdatePassClick(){
+        setNewUserOpen(false);
+        setUpdatePassOpen(true);
+    }
+
+    function handleCancel(){
+        setNewUserOpen(false);
+        setUpdatePassOpen(false);
+    }
+
+    function showDefaultRole(record) {
+        const defaultRole = userRoles.filter((user) => user.username === record.username).map((user) => user.userRole);
+        return defaultRole[0];
+    }
+
+    function handleSelectChange(value, record) {
+        const newUsersRoles = userRoles.map((user) => {
+            if(user.username === record.username){
+                user.userRole = value;
+            }
+            return user;
+        })
+        if(changedUsers[record.username]){
+            const {[record.username]: value, ...rest} = changedUsers;
+            setChangedUsers({...rest});
+        } else {
+            setChangedUsers({...changedUsers, [record.username]: value});
+        }
+        setUserRoles(newUsersRoles);
+    }
+
+    function renderHeader() {
+        return (
+            <div className="users-management-header">
+                <Space>
+                    <Button type="primary" onClick={() => console.log("update")} loading={loading} icon={<UserSwitchOutlined style={{fontSize: '20px'}}/>}>Update</Button>
+                    <Button type="primary" onClick={handleNewUserClick} icon={<UserAddOutlined style={{fontSize: '20px'}}/>}>Add User</Button>
+                </Space>
+            </div>
+        )
+    }
 
     const columns = [
         {
@@ -41,21 +90,72 @@ export default function UsersManagement() {
             title: 'Role',
             dataIndex: 'role',
             key: 'role',
+            render: (text, record) => (
+                <Select
+                    defaultValue= {showDefaultRole(record)}
+                    value= {showDefaultRole(record)}
+                    onChange={(value) => handleSelectChange(value, record)}
+                    style={{ width: 120 }}
+                >
+                {roles.map((roleName) => {
+                return (
+                    <Option key={roleName} value={roleName}>
+                        {roleName}
+                    </Option>
+                )})}
+            </Select>
+            ),
+        },
+        {
+            title: 'First Name',
+            dataIndex: 'firstName',
+            key: 'firstName',
+        },
+        {
+            title: 'Last Name',
+            dataIndex: 'lastName',
+            key: 'lastName',
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
         },
         {
             title: 'Action',
+            dataIndex: 'action',
             key: 'action',
             render: (text, record) => (
-                <Space size="middle" key={text}>
-                    <a>Invite {record.username}</a>
-                    <a>Delete</a>
+                <Space size="middle" key={record.username}>
+                    <Button onClick={handleUpdatePassClick}>Reset Password</Button>
+                    <Button danger={true} icon={<UserDeleteOutlined style={{fontSize: '20px'}}/>}>Delete</Button>
                 </Space>
             ),
         },
     ];
-  return (
-    <div className="container">
-        { isAdmin && <Table columns={columns} dataSource={data} title={() => "Users Table"} footer={() => ""}/>}
-    </div>
-  )
+
+    if(error) {
+        return <div>failed to load</div>
+    }
+    if(users){
+        
+        const realData = users.map((user) => { 
+            return {
+                username: user.username,
+                role: user.userRole,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                createdAt: new Date(user.createdAt).toLocaleString('en-GB'),
+            }
+        })
+
+        return (
+            <div className="container">
+                <Title className="form-title">Users Management</Title>
+                { isAdmin && <Table columns={columns} dataSource={realData} loading={loading} title={renderHeader} footer={() => ""}/>}
+                <NewUserForm onOpen={newUserOpen} onCancel={handleCancel}/>
+                <ResetPasswordForm onOpen={updatePassOpen} onCancel={handleCancel}/>
+            </div>
+        )
+    }
 }
