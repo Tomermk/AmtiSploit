@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {AutoComplete, Card, Col, Select} from 'antd'
 import {Pie} from 'react-chartjs-2';
 
-export default function HostsPie({rawData, loading, error}) {
+export default function HostsPie({rawData, loading, error, colSpan}) {
     const [host,setHost] = useState('All');
 
 
@@ -95,7 +95,7 @@ export default function HostsPie({rawData, loading, error}) {
         }
 
     return (
-        <Col span={8}>
+        <Col span={24 / (colSpan + 1)}>
             <Card title={<SelectForPie/>} bordered={false} bodyStyle={{ padding: '24px', display: 'flex', justifyContent: 'center'}} headStyle={{height: '57px'}} >
                 <Pie data={data} height="400px" options={{responsive: true}}/>
             </Card>

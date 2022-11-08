@@ -1,10 +1,57 @@
-import { useState } from "react";
-import { Drawer, Button, Space, Form, Input, Row, Col } from "antd";
+import { useState} from "react";
+import { Drawer, Button, Space, Form, Input, Row, Col, message } from "antd";
+import useAxios from "../utils/useAxios";
 
-export default function ResetPasswordForm({ onOpen, onCancel, isCurrent }) {
+export default function ResetPasswordForm({ onOpen, onCancel, isCurrent, userId, testMessage }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [ destroyOnClose, setDestroyOnClose] = useState(false);
+  const axiosAuth = useAxios();
+
+
+
+  const handleClick = () => {
+    setLoading(true);
+    if(isCurrent){
+      axiosAuth.post(`/users/${userId}/resetSelfPassword`,{'oldPassword': currentPassword, 'newPassword': newPassword}).then((res) => {
+        testMessage.success("Password reset successfully");
+        setLoading(false);
+        setNewPassword("");
+        setConfirmNewPassword("");
+        setCurrentPassword("");
+        setDestroyOnClose(true);
+        onCancel();
+      }).catch((err) => {
+        console.log(err);
+        if(err.response.status === 400 || err.response.status === 401){
+          message.error(err.response.data.errors[0].msg);
+        }else{
+          message.error("Internal server error");
+        }
+        setLoading(false);
+      });
+    }else{
+      axiosAuth.post(`/users/${userId}/resetPassword`,{'newPassword': newPassword}).then((res) => {
+        testMessage.success("Password reset successfully");
+        setLoading(false);
+        setNewPassword("");
+        setConfirmNewPassword("");
+        setCurrentPassword("");
+        setDestroyOnClose(true);
+        onCancel();
+      }).catch((err) => {
+        console.log(err);
+        if(err.response.status !== 500){
+          message.error(err.response.data.errors[0].msg);
+        }else{
+          message.error("Internal server error");
+        }
+        setLoading(false);
+      });
+  }
+}
 
   return (
     <Drawer
@@ -14,16 +61,17 @@ export default function ResetPasswordForm({ onOpen, onCancel, isCurrent }) {
       open={onOpen}
       visible={onOpen}
       bodyStyle={{ paddingBottom: 80 }}
+      destroyOnClose={destroyOnClose}
       extra={
         <Space>
           <Button onClick={onCancel}>Cancel</Button>
-          <Button onClick={onCancel} type="primary">
+          <Button onClick={handleClick} type="primary" loading={loading}>
             Submit
           </Button>
         </Space>
       }
     >
-      <Form layout="vertical" hideRequiredMark>
+      <Form layout="vertical" hideRequiredMark initialValues={{remember: false}}>
         {isCurrent && (
           <Row gutter={16}>
             <Col span={12}>

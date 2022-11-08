@@ -49,21 +49,21 @@ function Login() {
         >
           <img src={logo} alt='logo' style={{width: 100, paddingBottom: '20px'}} />
           <Form.Item
-            //label="Email"
-            name="email"
+            //label="username"
+            name="username"
             rules={[
               {
                 required: true,
-                message: 'Please input your Email!',
+                message: 'Please input your Username!',
               },
               { whitespace: true,
-                message: 'Email cannot be empty'
+                message: 'Username cannot be empty'
               },
             ]}
           >
             <Input 
               prefix={<MailOutlined className="site-form-item-icon" />} 
-              placeholder="example@gmail.com" 
+              placeholder="Username" 
               value={username} 
               onChange={(e) => {setUsername(e.target.value);
               setError("");}}
