@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from 'react'
-import { Space, Table, Select, Button, Typography} from 'antd';
-import { UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
+import { Space, Table, Select, Button, Typography, Popconfirm} from 'antd';
+import { UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined, ExclamationCircleFilled } from '@ant-design/icons';
 import useSWR from 'swr';
 import useAxios from './utils/useAxios';
 import {AuthContext} from './context/AuthContext';
@@ -15,6 +15,8 @@ export default function UsersManagement() {
     const { data: users, loading, error} = useSWR("/users",fetcher);
     const { user, setCurrent} = useContext(AuthContext)
     const [ isAdmin, setIsAdmin] = useState(false);
+    const [ confirmOpen, setConfirmOpen] = useState(false);
+    const [ isCurrentUserReset, setIsCurrentUserReset] = useState(false);
     const [ changedUsers, setChangedUsers] = useState({});
     const [ userRoles, setUserRoles] = useState(users);
     const [ newUserOpen, setNewUserOpen] = useState(false);
@@ -38,7 +40,12 @@ export default function UsersManagement() {
         setNewUserOpen(true);
     }
 
-    function handleUpdatePassClick(){
+    function handleUpdatePassClick(username){
+        if(username === user.username){
+            setIsCurrentUserReset(true);
+        } else {
+            setIsCurrentUserReset(false);
+        }
         setNewUserOpen(false);
         setUpdatePassOpen(true);
     }
@@ -73,7 +80,7 @@ export default function UsersManagement() {
         return (
             <div className="users-management-header">
                 <Space>
-                    <Button type="primary" onClick={() => console.log("update")} loading={loading} icon={<UserSwitchOutlined style={{fontSize: '20px'}}/>}>Update</Button>
+                    <Button type="primary" onClick={() => console.log("update")} loading={loading} icon={<UserSwitchOutlined style={{fontSize: '20px'}}/>}>Update Roles</Button>
                     <Button type="primary" onClick={handleNewUserClick} icon={<UserAddOutlined style={{fontSize: '20px'}}/>}>Add User</Button>
                 </Space>
             </div>
@@ -96,6 +103,7 @@ export default function UsersManagement() {
                     value= {showDefaultRole(record)}
                     onChange={(value) => handleSelectChange(value, record)}
                     style={{ width: 120 }}
+                    disabled={user.username==record.username ? true: false}
                 >
                 {roles.map((roleName) => {
                 return (
@@ -117,6 +125,16 @@ export default function UsersManagement() {
             key: 'lastName',
         },
         {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            render: (text, record) => (
+                <>
+                    {record.email ? record.email : 'No email'}
+                </>
+            )
+        },
+        {
             title: 'Created At',
             dataIndex: 'createdAt',
             key: 'createdAt',
@@ -127,15 +145,23 @@ export default function UsersManagement() {
             key: 'action',
             render: (text, record) => (
                 <Space size="middle" key={record.username}>
-                    <Button onClick={handleUpdatePassClick}>Reset Password</Button>
-                    <Button danger={true} icon={<UserDeleteOutlined style={{fontSize: '20px'}}/>}>Delete</Button>
+                    <Button onClick={() => handleUpdatePassClick(record.username)}>Reset Password</Button>
+                    <Popconfirm title="Are you sure to delete this user?" open={confirmOpen} onConfirm={() => setConfirmOpen(false)} okText="Yes" cancelText="No" disabled={user.username==record.username ? true: false} icon={<ExclamationCircleFilled style={{color: 'red', fontSize: '18px'}}/>}>
+                        <Button onClick={() => setConfirmOpen(true)} danger={true} icon={<UserDeleteOutlined style={{fontSize: '20px'}}/>} disabled={user.username==record.username ? true: false}>Delete</Button>
+                    </Popconfirm>
                 </Space>
             ),
         },
     ];
 
     if(error) {
-        return <div>failed to load</div>
+        return (
+            <>
+                <Title className="form-title">Users Management</Title>
+                <div>failed to load</div>
+                <Table columns={columns} dataSource={{}}/>
+            </>
+        )
     }
     if(users){
         
@@ -145,6 +171,7 @@ export default function UsersManagement() {
                 role: user.userRole,
                 firstName: user.firstName,
                 lastName: user.lastName,
+                email: user.emailAddress,
                 createdAt: new Date(user.createdAt).toLocaleString('en-GB'),
             }
         })
@@ -154,7 +181,7 @@ export default function UsersManagement() {
                 <Title className="form-title">Users Management</Title>
                 { isAdmin && <Table columns={columns} dataSource={realData} loading={loading} title={renderHeader} footer={() => ""}/>}
                 <NewUserForm onOpen={newUserOpen} onCancel={handleCancel}/>
-                <ResetPasswordForm onOpen={updatePassOpen} onCancel={handleCancel}/>
+                <ResetPasswordForm onOpen={updatePassOpen} onCancel={handleCancel} isCurrent={isCurrentUserReset}/>
             </div>
         )
     }

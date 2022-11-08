@@ -36,7 +36,9 @@ export default function NewUserForm({onCancel, onOpen}) {
                     <Form.Item
                         name="userName"
                         label="Username"
-                        rules={[{ required: true, message: 'Please enter username' }]}
+                        rules={[{ required: true, message: 'Please enter username' },
+                        { whitespace: true, message: 'Username cannot be empty'},
+                    ]}
                     >
                         <Input placeholder="Username" value={userName} onChange={(e) => setUserName(e.target.value)} />
                     </Form.Item>
@@ -59,7 +61,9 @@ export default function NewUserForm({onCancel, onOpen}) {
                     <Form.Item
                         name="firstName"
                         label="First Name"
-                        rules={[{ required: true, message: 'Please enter user first name' }]}
+                        rules={[{ required: true, message: 'Please enter user first name' },
+                        { whitespace: true, message: 'First name cannot be empty'},
+                    ]}
                     >
                         <Input placeholder="First Name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                     </Form.Item>
@@ -68,7 +72,9 @@ export default function NewUserForm({onCancel, onOpen}) {
                     <Form.Item
                         name="lastName"
                         label="Last Name"
-                        rules={[{ required: true, message: 'Please enter user last name' }]}
+                        rules={[{ required: true, message: 'Please enter user last name' },
+                        { whitespace: true, message: 'Last name cannot be empty'},
+                    ]}
                     >
                         <Input placeholder="Last Name" value={lastName} onChange={(e) => setLastName(e.target.value)}/>
                     </Form.Item>
@@ -79,7 +85,9 @@ export default function NewUserForm({onCancel, onOpen}) {
                     <Form.Item
                         name="email"
                         label="Email"
-                        rules={[{ required: true, message: 'Please enter user email' }]}
+                        rules={[{ required: true, message: 'Please enter user email' },
+                        { type: 'email', message: 'The input is not a valid E-mail!'},
+                    ]}
                     >
                         <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
                     </Form.Item>
@@ -88,7 +96,9 @@ export default function NewUserForm({onCancel, onOpen}) {
                     <Form.Item
                         name="password"
                         label="Password"
-                        rules={[{ required: true, message: 'Please enter user password' }]}
+                        rules={[{ required: true, message: 'Please enter user password' },
+                        { whitespace: true, message: 'Password cannot be empty'},
+                    ]}
                     >
                         <Input.Password placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                     </Form.Item>
@@ -99,7 +109,20 @@ export default function NewUserForm({onCancel, onOpen}) {
                     <Form.Item
                         name="confirmPassword"
                         label="Confirm Password"
-                        rules={[{ required: true, message: 'Please confirm user password' }]}
+                        dependencies={['password']}
+                        hasFeedback
+                        rules={[{ required: true, message: 'Please confirm password' },
+                        { whitespace: true, message: 'Password cannot be empty'},
+                        ({ getFieldValue }) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('password') === value) {
+                                    return Promise.resolve();
+                                }
+                                return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                            },
+                        }),
+                    ]}
+
                     >
                         <Input.Password placeholder="Confirm Password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}/>
                     </Form.Item>
