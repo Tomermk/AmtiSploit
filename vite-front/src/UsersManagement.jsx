@@ -1,8 +1,11 @@
 import {useContext, useEffect, useState} from 'react'
 import { Space, Table, Select, Button, Typography} from 'antd';
+import { UserAddOutlined, UserDeleteOutlined, UserSwitchOutlined } from '@ant-design/icons';
 import useSWR from 'swr';
 import useAxios from './utils/useAxios';
 import {AuthContext} from './context/AuthContext';
+import NewUserForm from './Components/NewUserForm';
+import ResetPasswordForm from './Components/ResetPasswordForm';
 import "./UsersManagement.css"
 
 
@@ -10,10 +13,12 @@ export default function UsersManagement() {
     const axiosAuth = useAxios();
     const fetcher = url => axiosAuth.get(url).then(res => res.data)
     const { data: users, loading, error} = useSWR("/users",fetcher);
-    const {user, setCurrent} = useContext(AuthContext)
-    const [isAdmin, setIsAdmin] = useState(false);
-    const [changedUsers, setChangedUsers] = useState({});
+    const { user, setCurrent} = useContext(AuthContext)
+    const [ isAdmin, setIsAdmin] = useState(false);
+    const [ changedUsers, setChangedUsers] = useState({});
     const [ userRoles, setUserRoles] = useState(users);
+    const [ newUserOpen, setNewUserOpen] = useState(false);
+    const [ updatePassOpen, setUpdatePassOpen] = useState(false);
     const roles = ['Admin', 'User'];
     const {Option} = Select;
     const { Title } = Typography;
@@ -28,7 +33,20 @@ export default function UsersManagement() {
         }
     }, [])
 
+    function handleNewUserClick(){
+        setUpdatePassOpen(false);
+        setNewUserOpen(true);
+    }
 
+    function handleUpdatePassClick(){
+        setNewUserOpen(false);
+        setUpdatePassOpen(true);
+    }
+
+    function handleCancel(){
+        setNewUserOpen(false);
+        setUpdatePassOpen(false);
+    }
 
     function showDefaultRole(record) {
         const defaultRole = userRoles.filter((user) => user.username === record.username).map((user) => user.userRole);
@@ -55,8 +73,8 @@ export default function UsersManagement() {
         return (
             <div className="users-management-header">
                 <Space>
-                    <Button type="primary" onClick={() => console.log("update")} loading={loading}>Update</Button>
-                    <Button type="primary" onClick={() => console.log("add user")}>Add User</Button>
+                    <Button type="primary" onClick={() => console.log("update")} loading={loading} icon={<UserSwitchOutlined style={{fontSize: '20px'}}/>}>Update</Button>
+                    <Button type="primary" onClick={handleNewUserClick} icon={<UserAddOutlined style={{fontSize: '20px'}}/>}>Add User</Button>
                 </Space>
             </div>
         )
@@ -109,8 +127,8 @@ export default function UsersManagement() {
             key: 'action',
             render: (text, record) => (
                 <Space size="middle" key={record.username}>
-                    <Button>Reset Password</Button>
-                    <Button danger={true}>Delete</Button>
+                    <Button onClick={handleUpdatePassClick}>Reset Password</Button>
+                    <Button danger={true} icon={<UserDeleteOutlined style={{fontSize: '20px'}}/>}>Delete</Button>
                 </Space>
             ),
         },
@@ -135,6 +153,8 @@ export default function UsersManagement() {
             <div className="container">
                 <Title className="form-title">Users Management</Title>
                 { isAdmin && <Table columns={columns} dataSource={realData} loading={loading} title={renderHeader} footer={() => ""}/>}
+                <NewUserForm onOpen={newUserOpen} onCancel={handleCancel}/>
+                <ResetPasswordForm onOpen={updatePassOpen} onCancel={handleCancel}/>
             </div>
         )
     }
