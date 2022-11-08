@@ -57,7 +57,7 @@ function StatisticsPage() {
               fontSize: 20,
               color: '#bfbfbf',
             }}> Failed to load</div>}
-        <HostsPie rawData={hostStats} loading={hostsStatsLoading} error={hostsStatsError} />
+        <HostsPie rawData={hostStats} loading={hostsStatsLoading} error={hostsStatsError} colSpan={attackNames.length}/>
       </Row>
       <Row style={{ marginTop: '10px'}}>
         <VulnLine rawData={vulnDates} vulnNames={attackNames} loading={vulnDatesLoading} error={vulnDatesError} />

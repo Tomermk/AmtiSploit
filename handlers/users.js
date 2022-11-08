@@ -93,7 +93,7 @@ const archivePassword = async (username,passwordHash,salt) => {
 
 const isPasswordUsed = async (username,password) => {
   try{
-    
+    console.log("Username in password is used: ",username);
     const results = await PasswordHistory.findAll(
       {
         attributes: ['passwordHash','passwordSalt'],
@@ -121,6 +121,36 @@ const isPasswordComplexed = (password) => {
   else return true    
 }
 
+const deleteUserByIDFromDB = async (id) => {
+  try {
+      const user = await Users.destroy({ where: { id: id } })
+      console.log(user);
+      return user;
+  } catch(error) {
+    console.error(error);
+    return null;
+  }
+};
+
+const createUserInDB = async (username, password, userRole, emailAddress,firstName, lastName) => {
+  var passRes = calculateHmacAndSalt(password)
+  let passwordHash = passRes.hmac
+  salt = passRes.salt
+  await Users.create({
+      userName: username,
+      passwordHash: passwordHash,
+      passwordSalt: salt,
+      firstName: firstName,
+      lastName: lastName,
+      emailAddress: emailAddress,
+      userRole: userRole,
+  })
+  await archivePassword(username,passwordHash,salt)
+  console.log(`User '${username}' created`)
+};
+
+
+
 // const isPendingPasswordReset = async (username) => {
 //   // VALIDATE
 //   var results = databaseConnection.query(`SELECT userName FROM forgetPassword WHERE userName = '${username}'`)
@@ -137,4 +167,6 @@ module.exports = {
   isPasswordUsed,
   isPasswordComplexed,
   validatePassword,
+  deleteUserByIDFromDB,
+  createUserInDB,
 };

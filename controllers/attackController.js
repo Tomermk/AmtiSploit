@@ -55,7 +55,6 @@ const launchAttack = async (req, res = response) => {
             throw new Error("attack failed");
         }
         } catch(error) {
-            console.log("I am here@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
             await setExploitErrorMsg(exploit.dataValues.id,error.message)
             console.log("##################")
             console.log(error.message)

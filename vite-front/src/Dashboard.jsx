@@ -19,6 +19,7 @@ function Dashboard() {
 
   const handleMenuClick = (target) =>{
     if( target.key === 'signout'){
+      setCurrent('/');
       logoutUser();
     } else {
       setCurrent(target.key);
