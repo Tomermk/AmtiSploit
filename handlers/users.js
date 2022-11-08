@@ -149,7 +149,17 @@ const createUserInDB = async (username, password, userRole, emailAddress,firstNa
   console.log(`User '${username}' created`)
 };
 
-
+const updateUserRoleInDB = async (id, userRole) => {
+  await Users.update (
+    {
+      userRole: userRole,
+    },
+    {
+      where: { id: id },
+    }
+  )
+  console.log(`User role changed for '${id}'`)
+};
 
 // const isPendingPasswordReset = async (username) => {
 //   // VALIDATE
@@ -169,4 +179,5 @@ module.exports = {
   validatePassword,
   deleteUserByIDFromDB,
   createUserInDB,
+  updateUserRoleInDB,
 };

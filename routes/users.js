@@ -1,5 +1,5 @@
 const {Router} = require('express');
-const { getAllUsers, getUserByID, changeSelfPassword,changePassword ,deleteUserbyID, createUser  } = require('../controllers/usersController');
+const { getAllUsers, getUserByID, changeSelfPassword,changePassword ,deleteUserbyID, createUser, updateUser  } = require('../controllers/usersController');
 const {validateInput} = require("../middleware/validate-login");
 const {check,body} = require("express-validator");
 
@@ -59,6 +59,18 @@ router.post("/",
         validateInput,
     ],
     createUser
+);
+
+router.put("/",
+    [
+        check("username", "Username is required").not().isEmpty(),
+        check("role", "Role is required").not().isEmpty(),
+        check("role", "Role must be 'Admin' or 'User'").matches(roleRegex),
+        body('username').trim().escape(),
+        body('role').trim().escape(),
+        validateInput,
+    ],
+    updateUser
 );
 
 // router.post("/:userId/forgetPassword", function (req, res) {

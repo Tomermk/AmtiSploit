@@ -68,7 +68,6 @@ export default function UsersManagement() {
   }
 
   const handleUserDelete = (userId) => {
-    console.log("delete",user);
     axiosAuth.delete(`/users/${userId}`).then((res) => {
       if(res.status === 200)
       {
@@ -87,6 +86,34 @@ export default function UsersManagement() {
     setConfirmOpen(false);
   }
 
+
+  const handleUpdateClick = () => {
+    if(Object.keys(changedUsers).length > 0){
+      let changedUsersArray = Object.entries(changedUsers).map(([key, value]) => {
+        return { username: key, role: value };
+      });
+      changedUsersArray.forEach((user) => {
+        axiosAuth
+          .put("/users", { username: user.username ,role: user.role })
+          .then((res) => {
+            if(res.status === 200)
+            {
+              message.success(`${user.username} updated successfully`);
+            }
+          }).catch(err => {
+            if(err.response.status !== 500){
+              message.error(`${user.username} error:` + err.response.data.errors[0].msg);
+            }else{
+              message.error("Internal server error");
+            }
+          });
+      });
+    
+  } else {
+    message.info("No changes were selected");
+  }
+  mutate("/users");
+  };
 
 
   function handleSelectChange(value, record) {
@@ -111,7 +138,7 @@ export default function UsersManagement() {
         <Space>
           <Button
             type="primary"
-            onClick={() => console.log("update")}
+            onClick={handleUpdateClick}
             loading={loading}
             icon={<UserSwitchOutlined style={{ fontSize: "20px" }} />}
           >
@@ -248,24 +275,26 @@ export default function UsersManagement() {
 
     return (
       <div className="container">
-        <Title className="form-title">Users Management</Title>
-        {isAdmin && (
-          <Table
-            columns={columns}
-            dataSource={realData}
-            loading={loading}
-            title={renderHeader}
-            footer={() => ""}
+        <div className="table-container">
+          <Title className="form-title">Users Management</Title>
+          {isAdmin && (
+            <Table
+              columns={columns}
+              dataSource={realData}
+              loading={loading}
+              title={renderHeader}
+              footer={() => ""}
+            />
+          )}
+          <NewUserForm onOpen={newUserOpen} onCancel={handleCancel} testMessage={message} mutation={mutate}/>
+          <ResetPasswordForm
+            onOpen={updatePassOpen}
+            onCancel={handleCancel}
+            isCurrent={isCurrentUserReset}
+            userId={selectedUserId}
+            testMessage={message}
           />
-        )}
-        <NewUserForm onOpen={newUserOpen} onCancel={handleCancel} testMessage={message} mutation={mutate}/>
-        <ResetPasswordForm
-          onOpen={updatePassOpen}
-          onCancel={handleCancel}
-          isCurrent={isCurrentUserReset}
-          userId={selectedUserId}
-          testMessage={message}
-        />
+        </div>
       </div>
     );
   }

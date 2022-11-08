@@ -13,7 +13,6 @@ const [theme, setTheme] = useState('dark');
 const {user, current, setCurrent} = useContext(AuthContext);
 
 useEffect(() => {
-    console.log('current', current);
     onMenuClick({key: current});
 }, [current])
 

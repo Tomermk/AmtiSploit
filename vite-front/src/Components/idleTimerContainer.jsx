@@ -10,20 +10,17 @@ export const IdleTimerContainer = ({children}) => {
 
 
     const onIdle = () => {
-        console.log("User is idle");
         setIsModalOpen(false);
         navigate("/login");
     }
 
 
     const onActive = () => {
-        console.log('User is active');
-
+        idleTimer.activate();
     }
 
 
     const onPrompt = () => {
-        console.log("Prompt is active");
         setIsModalOpen(true);
     }
 

@@ -10,6 +10,7 @@ export default function NewUserForm({ onCancel, onOpen, testMessage, mutation })
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("User");
+  const [ destroyOnClose, setDestroyOnClose] = useState(false);
   const { Option } = Select;
   const axiosAuth = useAxios();
 
@@ -33,6 +34,7 @@ export default function NewUserForm({ onCancel, onOpen, testMessage, mutation })
         setPassword("");
         setConfirmPassword("");
         setRole("User");
+        setDestroyOnClose(true);
         onCancel();
       })
       .catch((err) => {
@@ -53,6 +55,7 @@ export default function NewUserForm({ onCancel, onOpen, testMessage, mutation })
       open={onOpen}
       visible={onOpen}
       bodyStyle={{ paddingBottom: 80 }}
+      destroyOnClose={destroyOnClose}
       extra={
         <Space>
           <Button onClick={onCancel}>Cancel</Button>
