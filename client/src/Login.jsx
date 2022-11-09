@@ -2,7 +2,6 @@ import React,{useState, useRef, useEffect, useContext} from 'react';
 import { LockOutlined, MailOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Card } from 'antd';
 import { AuthContext } from './context/AuthContext';
-import logo from './assets/react.svg'
 import logo2 from './assets/logo-no-background.svg'
 import './App.css'
 

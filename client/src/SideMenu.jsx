@@ -2,7 +2,7 @@
 import {useState, useContext, useEffect} from 'react'
 import { AuthContext } from './context/AuthContext';
 import {Menu} from 'antd'
-import {PoweroffOutlined,BugOutlined, PieChartOutlined, SettingOutlined, UserOutlined, UnlockOutlined, MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons'
+import {PoweroffOutlined,BugOutlined, PieChartOutlined, SettingOutlined, UserOutlined} from '@ant-design/icons'
 import 'antd/dist/antd.css';
 
 
@@ -10,7 +10,7 @@ import 'antd/dist/antd.css';
 
 function SideMenu({onMenuClick}) {
 const [theme, setTheme] = useState('dark');
-const {user, current, setCurrent} = useContext(AuthContext);
+const {user, current} = useContext(AuthContext);
 
 useEffect(() => {
     onMenuClick({key: current});
@@ -21,7 +21,6 @@ const items = [
   { label: 'Exploits management', key: '/attack', icon: <BugOutlined />},
   { label:'Settings',key: 'settings', icon: <SettingOutlined/>, children: [
     {label: 'Users', key: '/usersmgmt', icon: <UserOutlined/>},
-    {label: 'Permissions',key: '10', icon: <UnlockOutlined/>}
   ] },
   { label: 'Logout', key: 'signout',icon: <PoweroffOutlined/>, danger: true}
 ];

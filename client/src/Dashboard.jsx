@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react'
+import {useContext} from 'react'
 import SideMenu from './SideMenu'
 import StatisticsPage from './StatisticsPage'
 import NotFound from './NotFound';
