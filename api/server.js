@@ -11,6 +11,7 @@ const launchRouter = require("./routes/launch");
 const statisticsRouter = require("./routes/statistics");
 const usersRouter = require("./routes/users");
 const  {validateToken} = require("./middleware/tokenValidator");
+const {rateLimiterUsingThirdParty} = require("./middleware/rateLimiter");
 const PORT = process.env.PORT || 6000;
 
 
@@ -23,9 +24,11 @@ var corsOptions = {
   origin: "*",
 };
 
+app.disable('x-powered-by'); 
 app.use(cors(corsOptions));
 const jsonParser = bodyParser.json()
 
+app.use(rateLimiterUsingThirdParty);
 app.use("/login",jsonParser ,loginRouter);
 app.all("*",[validateToken]);
 app.use("/logout",jsonParser, logoutRouter);

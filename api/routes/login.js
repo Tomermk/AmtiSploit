@@ -3,7 +3,7 @@ const {Router} = require('express');
 const router = Router();
 const {check,body} = require("express-validator");
 const {validateInput} = require("../middleware/validate-login");
-const {validateRefresh, validateToken} = require("../middleware/tokenValidator");
+const {validateRefresh} = require("../middleware/tokenValidator");
 const {login, refresh} = require("../controllers/auth");
 
 
