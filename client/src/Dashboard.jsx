@@ -34,9 +34,14 @@ function Dashboard() {
       <Layout style={{ minHeight: '100vh',}}>
         <Sider collapsible collapsed={collapsed} onCollapse={(value => setCollapsed(value))}>
           <div className='logo'>
-            <object data={collapsed ? Logo : testLogo} type="image/svg+xml" className='logoImage' style={collapsed ? {} :{width: 150}}>
-              <img src={collapsed ? Logo : testLogo}/>
-            </object>
+            {collapsed ?
+            <object data={Logo} type="image/svg+xml" className='logoImage' >
+              <img src={Logo}/>
+            </object> :
+            <object data={testLogo} type="image/svg+xml" className='logoImage' style={{objectPosition: '0px' ,width: 150 }}>
+            <img src={testLogo}/>
+          </object>
+            }
           </div>
           <SideMenu onMenuClick={handleMenuClick}/>
         </Sider>

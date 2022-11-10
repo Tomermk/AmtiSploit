@@ -1,6 +1,8 @@
 require('dotenv').config()
 const express = require("express");
 const app = express();
+const https = require("https");
+const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require('body-parser');
 const loginRouter = require("./routes/login");
@@ -11,6 +13,11 @@ const usersRouter = require("./routes/users");
 const  {validateToken} = require("./middleware/tokenValidator");
 const PORT = process.env.PORT || 6000;
 
+
+const options = {
+  key: fs.readFileSync('./certs/key.pem'),
+  cert: fs.readFileSync('./certs/cert.pem')
+};
 
 var corsOptions = {
   origin: "*",
@@ -37,4 +44,4 @@ app.post("/post", jsonParser,(req, res) => {
   });
 
 
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+https.createServer(options, app).listen(PORT, console.log(`Server started on port ${PORT}`));

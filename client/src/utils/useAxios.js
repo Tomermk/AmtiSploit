@@ -4,7 +4,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const baseURL = "http://localhost:3000";
+const baseURL = "https://localhost:3000";
 
 const useAxios = () => {
     const { token, reToken, setToken, setReToken } = useContext(AuthContext);
