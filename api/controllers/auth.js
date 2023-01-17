@@ -28,8 +28,8 @@ const login = async (req, res = response) => {
 const refresh = async (req, res = response) => {
   const data = req.data;
   console.log(data);
-  const newAccessToken = generateAccessToken(data.username, data.role);
-  const newRefreshToken = generateRefreshToken(data.username, data.role);
+  const newAccessToken = generateAccessToken(data.username, data.role, data.id);
+  const newRefreshToken = generateRefreshToken(data.username, data.role, data.id);
   res.status(200).json({
     accessToken: newAccessToken,
     refreshToken: newRefreshToken
