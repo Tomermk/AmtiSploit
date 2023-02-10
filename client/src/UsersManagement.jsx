@@ -11,6 +11,7 @@ import useAxios from "./utils/useAxios";
 import { AuthContext } from "./context/AuthContext";
 import NewUserForm from "./Components/NewUserForm";
 import ResetPasswordForm from "./Components/ResetPasswordForm";
+import PopConfirm from "./Components/PopConfirm";
 import "./UsersManagement.css";
 
 export default function UsersManagement() {
@@ -100,6 +101,8 @@ export default function UsersManagement() {
             {
               message.success(`${user.username} updated successfully`);
             }
+            const { [user.username]: value, ...rest } = changedUsers;
+            setChangedUsers({ ...rest });
           }).catch(err => {
             if(err.response.status !== 500){
               message.error(`${user.username} error:` + err.response.data.errors[0].msg);
@@ -217,7 +220,7 @@ export default function UsersManagement() {
         title: "Email",
         dataIndex: "email",
         key: "email",
-        render: (text, record) => <>{record.email ? record.email : "No email"}</>,
+        render: (text, record) => <>{record.email ? record.email : ""}</>,
       },
       {
         title: "Created At",
@@ -233,29 +236,7 @@ export default function UsersManagement() {
             <Button onClick={() => handleUpdatePassClick(record.username, record.userid)}>
               Reset Password
             </Button>
-            <Popconfirm
-              title="Are you sure to delete this user?"
-              open={confirmOpen}
-              onConfirm={() => handleUserDelete(record.userid)}
-              onCancel={() => setConfirmOpen(false)}
-              okText="Yes"
-              cancelText="No"
-              disabled={user.username == record.username ? true : false}
-              icon={
-                <ExclamationCircleFilled
-                  style={{ color: "red", fontSize: "18px" }}
-                />
-              }
-            >
-              <Button
-                onClick={() => setConfirmOpen(true)}
-                danger={true}
-                icon={<UserDeleteOutlined style={{ fontSize: "20px" }} />}
-                disabled={user.username == record.username ? true : false}
-              >
-                Delete
-              </Button>
-            </Popconfirm>
+            <PopConfirm record={record} user={user} onUserDelete={handleUserDelete}  />
           </Space>
         ),
       },

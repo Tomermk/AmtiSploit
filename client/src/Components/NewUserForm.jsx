@@ -53,7 +53,7 @@ export default function NewUserForm({ onCancel, onOpen, testMessage, mutation })
       width={720}
       onClose={onCancel}
       open={onOpen}
-      visible={onOpen}
+      // visible={onOpen}
       bodyStyle={{ paddingBottom: 80 }}
       destroyOnClose={destroyOnClose}
       extra={

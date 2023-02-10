@@ -7,7 +7,7 @@ export default function ResetPasswordForm({ onOpen, onCancel, isCurrent, userId,
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [ destroyOnClose, setDestroyOnClose] = useState(false);
+  const [ destroyOnClose, setDestroyOnClose] = useState(true);
   const axiosAuth = useAxios();
 
 
@@ -57,19 +57,19 @@ export default function ResetPasswordForm({ onOpen, onCancel, isCurrent, userId,
       width={720}
       onClose={onCancel}
       open={onOpen}
-      visible={onOpen}
+      // visible={onOpen}
       bodyStyle={{ paddingBottom: 80 }}
       destroyOnClose={destroyOnClose}
       extra={
         <Space>
           <Button onClick={onCancel}>Cancel</Button>
-          <Button onClick={handleClick} type="primary" loading={loading}>
+          <Button onClick={handleClick} type="primary" loading={loading} disabled={(newPassword && confirmNewPassword) ? false : true}>
             Submit
           </Button>
         </Space>
       }
     >
-      <Form layout="vertical" hideRequiredMark initialValues={{remember: false}}>
+      <Form layout="vertical" requiredMark={false} initialValues={{remember: false}}>
         {isCurrent && (
           <Row gutter={16}>
             <Col span={12}>
