@@ -117,7 +117,7 @@ const isPasswordUsed = async (username,password) => {
 
 const isPasswordComplexed = (password) => {
   var passwordValidation = passwordComplexity(PWD_CONFIG).validate(password)
-  if(Object.prototype.hasOwnProperty(passwordValidation,'error')) return false
+  if(Object.prototype.hasOwnProperty.call(passwordValidation,'error')) return false
   else return true    
 }
 
