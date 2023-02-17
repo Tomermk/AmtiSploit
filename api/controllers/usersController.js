@@ -133,7 +133,7 @@ const createUser = async (req, res = response) => {
             }
             
             var user = await getUserFromDB(req.body.username);
-            if(user != null){
+            if(user !== null){
                 res.status(400).send({'errors':[{'msg':'Username already exists'}]})
                 return
             }

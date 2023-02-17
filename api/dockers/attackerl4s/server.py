@@ -5,7 +5,6 @@ import time
 import requests
 import os
 import base64
-from urllib import request
 import urllib.parse as urlparse
 
 
