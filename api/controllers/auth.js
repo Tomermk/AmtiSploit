@@ -27,7 +27,6 @@ const login = async (req, res = response) => {
 
 const refresh = async (req, res = response) => {
   const data = req.data;
-  console.log(data);
   const newAccessToken = generateAccessToken(data.username, data.role, data.userid);
   const newRefreshToken = generateRefreshToken(data.username, data.role, data.userid);
   res.status(200).json({

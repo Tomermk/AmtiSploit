@@ -2,13 +2,9 @@ const rateLimit = require('express-rate-limit')
 
 
 const checkGetTable = async (method, path) => {
-    console.log("Method is:", method);
-    console.log("Path is:", path);
     if(method === 'GET' && path === '/launch/exploits'){
-        console.log('true');
         return true;
     }
-    console.log('false');
     return false;
 }
 

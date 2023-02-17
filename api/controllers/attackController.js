@@ -4,8 +4,6 @@ const {executeScript,cleanup,isHostOnline} = require("../handlers/attack");
 const { getVulnerability, setExploitStatus, setExploitErrorMsg, newExploit} = require("../handlers/vulnerabilities");
 
 const launchAttack = async (req, res = response) => {
-    console.log(req.body.attackname);
-    console.log(req.body.hostname);
     ip = req.body.hostname.split("://")[1].split(":")[0]
     port = req.body.hostname.split("://")[1].split(":")[1]
     
@@ -37,8 +35,6 @@ const launchAttack = async (req, res = response) => {
             var count = 0
             const inter = setInterval(() => {
                 count = count + 1
-                console.log(count)
-                console.log(logFilePath)
                 if (fs.existsSync(logFilePath)){
                     clearInterval(inter)
                     setExploitStatus(exploit.dataValues.id,3)
@@ -56,9 +52,6 @@ const launchAttack = async (req, res = response) => {
         }
         } catch(error) {
             await setExploitErrorMsg(exploit.dataValues.id,error.message)
-            console.log("##################")
-            console.log(error.message)
-            console.log("##################")
     
             await setExploitStatus(exploit.dataValues.id,4)
             await cleanup(cleanupScript,logFilePath)

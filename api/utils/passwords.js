@@ -60,7 +60,7 @@ exports.isPasswordUsed = (username,password) => {
 
 exports.isComplexed = (password) => {
     var passwordValidation = passwordComplexity(PWD_CONFIG).validate(password)
-    if(passwordValidation.hasOwnProperty('error')) return false
+    if(Object.prototype.hasOwnProperty(passwordValidation,'error')) return false
     else return true    
 }
 

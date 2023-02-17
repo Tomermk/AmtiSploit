@@ -38,7 +38,6 @@ app.use("/statistics",jsonParser, statisticsRouter);
 
 
 app.get("/api", (req, res) => {
-  console.log(req.data);
   res.json({ Username: req.data.username, Rolename: req.data.role });
 });
   
