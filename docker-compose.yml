@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  as-mysql: 
+    image: mysql:latest
+    container_name: as-mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password1
+    restart: always
+
+  client: 
+    image: amtisploitclient:latest
+    container_name: as-client
+    restart: always
+    ports: 
+      - 443:443
+    depends_on:
+      - api
+
+  api:
+    image: as-backend:latest
+    container_name: as-backend
+    restart: unless-stopped
+    links: 
+      - as-mysql
+    ports:
+      - 3000:3000
+    depends_on:
+      - as-mysql

@@ -26,7 +26,7 @@ export const IdleTimerContainer = ({children}) => {
 
     const idleTimer = useIdleTimer({
         timeout: 1000 * 60 * 2,
-        promptTimeout: 1000 * 60,
+        promptBeforeIdle: 1000 * 60,
         timer: workerTimers,
         onIdle,
         onActive,

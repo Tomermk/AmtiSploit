@@ -13,7 +13,7 @@ export default defineConfig({
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'SAMEORIGIN',
       'Referrer-Policy': 'same-origin',
-      'Content-Security-Policy-Report-Only': 'default-src \'self\' \'unsafe-inline\' \'unsafe-eval\'',
+      'Content-Security-Policy-Report-Only': 'default-src \'self\' \'unsafe-inline\' \'unsafe-eval\' \'localhost:3000\'',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   },
 },
