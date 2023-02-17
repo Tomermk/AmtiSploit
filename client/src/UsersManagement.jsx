@@ -135,6 +135,15 @@ export default function UsersManagement() {
     setUserRoles(newUsersRoles);
   }
 
+
+  function showDefaultRole(record) {
+    if( userRoles) {
+      const defaultRole = userRoles.filter((user) => user.username === record.username).map((user) => user.userRole);
+      return defaultRole[0];
+    }
+  }
+
+
   function renderHeader() {
     return (
       <div className="users-management-header">
@@ -170,13 +179,6 @@ export default function UsersManagement() {
     );
   }
   if (users) {
-    
-    function showDefaultRole(record) {
-      if( userRoles) {
-        const defaultRole = userRoles.filter((user) => user.username === record.username).map((user) => user.userRole);
-        return defaultRole[0];
-      }
-    }
 
     const columns = [
       {

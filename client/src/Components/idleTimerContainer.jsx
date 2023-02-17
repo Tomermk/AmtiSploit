@@ -25,7 +25,7 @@ export const IdleTimerContainer = ({children}) => {
     }
 
     const idleTimer = useIdleTimer({
-        timeout: 1000 * 60 * 20,
+        timeout: 1000 * 60 * 2,
         promptTimeout: 1000 * 60,
         timer: workerTimers,
         onIdle,
@@ -58,7 +58,7 @@ export const IdleTimerContainer = ({children}) => {
             <Modal
             title="Where did you go?"
             open={isModalOpen}
-            visible={isModalOpen}
+            // visible={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
             okText="Logout"
