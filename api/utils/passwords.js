@@ -1,7 +1,5 @@
 const crypto = require("crypto");
-// var databaseConnection = require("../handlers/db");
 const PasswordHistory = require('../models/passhistory.model');
-const {DataTypes} = require("sequelize");
 const passwordComplexity = require("joi-password-complexity");
 const PWD_CONFIG = require("../config/pwd.config");
 const PWD_HISTORY_CONFIG = require("../config/pwdHistory.config");

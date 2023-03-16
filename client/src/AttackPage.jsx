@@ -23,9 +23,11 @@ export default function AttackPage() {
   function handleLaunchClick() {
     const hostname = protocol + host;
     axiosAuth.post("/launch", {'attackname': attackName,'hostname': hostname}).then(res => {
-    const newID = tableData.length + 1;
-    const newData = {id: newID, host: hostname, attack: attackName, status: 2, createdAt: new Date().toLocaleString(), errormsg: ""};
-    mutate([...tableData,newData], false);
+    if (res.status === 200) {
+      const newID = tableData.length + 1;
+      const newData = {id: newID, host: hostname, attack: attackName, status: 2, createdAt: new Date().toLocaleString(), errormsg: ""};
+      mutate([...tableData,newData], false);
+    }
     }).catch(err => {
       message.error(err.response.data.errors[0].msg);
     });

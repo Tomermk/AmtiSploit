@@ -45,7 +45,6 @@ const checkPasswordFromDB = ({ password,passwordHash, passwordSalt }) => {
 
 const validatePassword = async (username,password ) => {
   const res = await Users.findOne({attributes: ['passwordHash','passwordSalt'], where: {userName: username}})
-  const hmac = crypto.createHmac('sha256', password).update(res.passwordSalt).digest('hex')
   return validatePasswordHashAndSalt(password,res.passwordHash,res.passwordSalt)
 }
 
