@@ -55,7 +55,7 @@ const launchAttack = async (req, res = response) => {
     
             await setExploitStatus(exploit.dataValues.id,4)
             await cleanup(cleanupScript,logFilePath)
-            res.status(500).json(error.message);
+            res.status(400).json(error.message);
         }
     }
 

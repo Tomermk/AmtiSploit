@@ -12,6 +12,7 @@ const statisticsRouter = require("./routes/statistics");
 const usersRouter = require("./routes/users");
 const  {validateToken} = require("./middleware/tokenValidator");
 const {rateLimiterUsingThirdParty} = require("./middleware/rateLimiter");
+const {otelMiddleware} = require("./utils/tracer");
 const PORT = process.env.PORT || 6000;
 
 
@@ -29,6 +30,7 @@ app.use(cors(corsOptions));
 const jsonParser = bodyParser.json()
 
 app.use(rateLimiterUsingThirdParty);
+app.all("*",[otelMiddleware]);
 app.use("/login",jsonParser ,loginRouter);
 app.all("*",[validateToken]);
 app.use("/logout",jsonParser, logoutRouter);
